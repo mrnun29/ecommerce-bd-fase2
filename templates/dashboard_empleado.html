@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Empleado - E-Commerce{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h2><i class="bi bi-person-badge"></i> Panel de Empleado</h2>
+        <p class="text-muted">Bienvenido, {{ session.nombre }}</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card bg-primary text-white shadow">
+            <div class="card-body">
+                <h6 class="text-uppercase mb-1">Inventario</h6>
+                <h2 class="mb-0"><i class="bi bi-box-seam"></i></h2>
+                <a href="{{ url_for('productos_lista') }}" class="btn btn-light btn-sm mt-3 w-100">
+                    Gestionar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card bg-success text-white shadow">
+            <div class="card-body">
+                <h6 class="text-uppercase mb-1">Pedidos</h6>
+                <h2 class="mb-0"><i class="bi bi-cart-check"></i></h2>
+                <a href="{{ url_for('pedidos_lista') }}" class="btn btn-light btn-sm mt-3 w-100">
+                    Procesar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card bg-warning text-white shadow">
+            <div class="card-body">
+                <h6 class="text-uppercase mb-1">Proveedores</h6>
+                <h2 class="mb-0"><i class="bi bi-truck"></i></h2>
+                <a href="{{ url_for('proveedores_lista') }}" class="btn btn-light btn-sm mt-3 w-100">
+                    Ver
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <h4 class="mb-3">Tareas del Empleado</h4>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-plus-circle text-primary"></i> Agregar Productos
+                </h5>
+                <p class="card-text">Registrar nuevos productos en el inventario.</p>
+                <a href="{{ url_for('producto_crear') }}" class="btn btn-primary">
+                    <i class="bi bi-plus"></i> Nuevo Producto
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-exclamation-triangle text-danger"></i> Stock Bajo
+                </h5>
+                <p class="card-text">Revisar productos con stock bajo y gestionar reposición.</p>
+                <a href="{{ url_for('productos_stock_bajo') }}" class="btn btn-danger">
+                    <i class="bi bi-alert-circle"></i> Ver Alertas
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-clipboard-check text-success"></i> Procesar Pedidos
+                </h5>
+                <p class="card-text">Actualizar estado de pedidos y gestionar envíos.</p>
+                <a href="{{ url_for('pedidos_lista') }}" class="btn btn-success">
+                    <i class="bi bi-list-check"></i> Ver Pedidos
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-building text-warning"></i> Agregar Proveedor
+                </h5>
+                <p class="card-text">Registrar nuevos proveedores en el sistema.</p>
+                <a href="{{ url_for('proveedor_crear') }}" class="btn btn-warning">
+                    <i class="bi bi-plus"></i> Nuevo Proveedor
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-success">
+            <i class="bi bi-check-circle"></i>
+            <strong>Permisos de Empleado:</strong> Puedes gestionar inventarios, pedidos y proveedores.
+        </div>
+    </div>
+</div>
+{% endblock %}

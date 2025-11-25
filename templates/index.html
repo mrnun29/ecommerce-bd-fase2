@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - E-Commerce{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="jumbotron bg-white p-5 rounded shadow-sm">
+            <h1 class="display-4">Bienvenido al Sistema de Comercio Electrónico</h1>
+            <p class="lead">Sistema integral de gestión de inventarios y ventas en línea</p>
+            <hr class="my-4">
+            <p>Desarrollado para la Universidad Anáhuac Querétaro - Fase 2</p>
+            {% if not session.user_id %}
+            <div class="mt-4">
+                <a class="btn btn-primary btn-lg me-2" href="{{ url_for('registro') }}" role="button">
+                    <i class="bi bi-person-plus"></i> Registrarse
+                </a>
+                <a class="btn btn-outline-primary btn-lg" href="{{ url_for('login') }}" role="button">
+                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                </a>
+            </div>
+            {% else %}
+            <div class="mt-4">
+                <a class="btn btn-primary btn-lg" href="{{ url_for('dashboard') }}" role="button">
+                    <i class="bi bi-speedometer2"></i> Ir al Dashboard
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Productos Destacados -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h2 class="mb-4">Productos Disponibles</h2>
+    </div>
+</div>
+
+<div class="row">
+    {% if productos %}
+        {% for producto in productos[:6] %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                    <p class="card-text text-muted">{{ producto.descripcion }}</p>
+                    <p class="card-text">
+                        <strong class="text-primary fs-4">${{ "%.2f"|format(producto.precio) }}</strong>
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Stock: {{ producto.stock }} unidades
+                        </small>
+                    </p>
+                    {% if session.user_id %}
+                    <a href="{{ url_for('producto_detalle', id=producto.id_producto) }}" class="btn btn-outline-primary">
+                        Ver Detalles
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No hay productos disponibles. <a href="{{ url_for('producto_crear') }}">Agregar productos</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Características del Sistema -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h2 class="mb-4">Características del Sistema</h2>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="bi bi-box-seam fs-1 text-primary"></i>
+                <h5 class="card-title mt-3">Gestión de Inventario</h5>
+                <p class="card-text">Control automático de stock y alertas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="bi bi-cart-check fs-1 text-success"></i>
+                <h5 class="card-title mt-3">Pedidos</h5>
+                <p class="card-text">Procesamiento automático de órdenes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="bi bi-credit-card fs-1 text-info"></i>
+                <h5 class="card-title mt-3">Pagos Múltiples</h5>
+                <p class="card-text">Tarjeta, transferencia y efectivo</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="bi bi-graph-up fs-1 text-warning"></i>
+                <h5 class="card-title mt-3">Reportes</h5>
+                <p class="card-text">Análisis de ventas y estadísticas</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

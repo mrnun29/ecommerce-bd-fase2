@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Flask
+instance/
+.webassets-cache
+*.pyc
+
+# Base de datos local
+*.db
+*.sqlite
+*.sqlite3
+ecommerce.db
+
+# Configuración local (NO subir .env con contraseñas)
+.env
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Docker (opcional - descomentar si no quieres subir estos)
+# .docker/
+# docker-compose.override.yml
+
+# Archivos temporales
+*.tmp
+temp/
+tmp/
