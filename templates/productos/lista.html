@@ -36,6 +36,11 @@
                         <a href="{{ url_for('producto_detalle', id=producto.id_producto) }}" class="btn btn-outline-primary btn-sm">
                             <i class="bi bi-eye"></i> Ver Detalles
                         </a>
+                        {% if session.rol == 'Administrador' %}
+                        <a href="{{ url_for('producto_editar', id=producto.id_producto) }}" class="btn btn-warning btn-sm">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

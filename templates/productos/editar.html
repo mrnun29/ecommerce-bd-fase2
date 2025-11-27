@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Producto{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-pencil-square"></i> Editar Producto</h2>
+        <p class="text-muted">Modificar información del producto #{{ producto.id_producto }}</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('producto_editar', id=producto.id_producto) }}">
+                    <h5 class="mb-3"><i class="bi bi-box-seam"></i> Información del Producto</h5>
+                    
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre del Producto *</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" 
+                               value="{{ producto.nombre }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" 
+                                  rows="3">{{ producto.descripcion }}</textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="precio" class="form-label">Precio *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="precio" name="precio" 
+                                       value="{{ producto.precio }}" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="imagen" class="form-label">Imagen (URL o nombre)</label>
+                            <input type="text" class="form-control" id="imagen" name="imagen" 
+                                   value="{{ producto.imagen or '' }}" 
+                                   placeholder="producto.jpg">
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h5 class="mb-3"><i class="bi bi-boxes"></i> Control de Inventario</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="stock" class="form-label">Stock Actual *</label>
+                            <input type="number" class="form-control" id="stock" name="stock" 
+                                   value="{{ producto.stock }}" min="0" required>
+                            <small class="text-muted">Stock actual: {{ producto.stock }} unidades</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="nivel_minimo" class="form-label">Nivel Mínimo *</label>
+                            <input type="number" class="form-control" id="nivel_minimo" name="nivel_minimo" 
+                                   value="{{ producto.nivel_minimo }}" min="0" required>
+                            <small class="text-muted">Alerta cuando stock ≤ este valor</small>
+                        </div>
+                    </div>
+                    
+                    {% if producto.stock <= producto.nivel_minimo %}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> 
+                        <strong>Alerta:</strong> El stock actual está en el nivel mínimo o por debajo.
+                    </div>
+                    {% endif %}
+                    
+                    <hr class="my-4">
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('productos_lista') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-info-circle"></i> Información Actual</h5>
+                <table class="table table-sm">
+                    <tr>
+                        <th>ID:</th>
+                        <td>{{ producto.id_producto }}</td>
+                    </tr>
+                    <tr>
+                        <th>Stock:</th>
+                        <td>
+                            <span class="badge {% if producto.stock <= producto.nivel_minimo %}bg-danger{% else %}bg-success{% endif %}">
+                                {{ producto.stock }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Nivel Min:</th>
+                        <td>{{ producto.nivel_minimo }}</td>
+                    </tr>
+                    <tr>
+                        <th>Precio:</th>
+                        <td>${{ "%.2f"|format(producto.precio) }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-lightbulb"></i> Consejos</h5>
+                <ul class="small">
+                    <li>El nombre debe ser descriptivo y único</li>
+                    <li>La descripción ayuda a identificar el producto</li>
+                    <li>El nivel mínimo activa alertas de stock bajo</li>
+                    <li>Los cambios de stock se registran en el historial</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow-sm bg-light">
+            <div class="card-body">
+                <h6><i class="bi bi-shield-exclamation"></i> Zona Peligrosa</h6>
+                <p class="small mb-2">Eliminar este producto es una acción irreversible.</p>
+                <form method="POST" action="{{ url_for('producto_eliminar', id=producto.id_producto) }}" 
+                      onsubmit="return confirm('¿Estás seguro de eliminar este producto? Esta acción no se puede deshacer.');">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash"></i> Eliminar Producto
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
