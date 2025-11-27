@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Inventario - {{ producto.nombre }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Editar Inventario</h4>
+            </div>
+            <div class="card-body">
+                <!-- Info del Producto -->
+                <div class="alert alert-info">
+                    <h5 class="alert-heading">{{ producto.nombre }}</h5>
+                    <p class="mb-1"><strong>Descripción:</strong> {{ producto.descripcion }}</p>
+                    <p class="mb-1"><strong>Precio:</strong> ${{ "%.2f"|format(producto.precio) }}</p>
+                    <hr>
+                    <p class="mb-0"><strong>Stock actual:</strong> <span class="badge bg-primary fs-6">{{ producto.stock }}</span> unidades</p>
+                    <p class="mb-0"><strong>Nivel mínimo actual:</strong> <span class="badge bg-secondary fs-6">{{ producto.nivel_minimo }}</span> unidades</p>
+                </div>
+
+                <!-- Formulario -->
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="stock" class="form-label">
+                                    <i class="bi bi-box-seam"></i> Stock Actual
+                                </label>
+                                <input type="number" class="form-control form-control-lg" id="stock" 
+                                       name="stock" value="{{ producto.stock }}" min="0" required>
+                                <div class="form-text">Actualiza la cantidad disponible en inventario</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="nivel_minimo" class="form-label">
+                                    <i class="bi bi-exclamation-triangle"></i> Nivel Mínimo
+                                </label>
+                                <input type="number" class="form-control form-control-lg" id="nivel_minimo" 
+                                       name="nivel_minimo" value="{{ producto.nivel_minimo }}" min="1" required>
+                                <div class="form-text">Stock mínimo antes de alertar</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calculadora de cambios -->
+                    <div class="card bg-light mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">Ajuste Rápido</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text">Agregar</span>
+                                        <input type="number" class="form-control" id="agregar" min="0" value="0">
+                                        <button type="button" class="btn btn-success" onclick="agregarStock()">
+                                            <i class="bi bi-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text">Restar</span>
+                                        <input type="number" class="form-control" id="restar" min="0" value="0">
+                                        <button type="button" class="btn btn-danger" onclick="restarStock()">
+                                            <i class="bi bi-dash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="text-muted">Usa estos botones para ajustar el stock rápidamente</small>
+                        </div>
+                    </div>
+
+                    <!-- Estado del inventario -->
+                    <div class="alert alert-secondary" id="estadoInventario">
+                        <strong>Estado:</strong> <span id="estadoTexto"></span>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle"></i> Guardar Cambios
+                        </button>
+                        <a href="{{ url_for('inventario') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Historial (placeholder) -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Historial de Cambios</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">No hay historial disponible aún. Esta funcionalidad se agregará en futuras versiones.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const stockInicial = {{ producto.stock }};
+    const nivelMinimoInicial = {{ producto.nivel_minimo }};
+    
+    function agregarStock() {
+        const agregar = parseInt(document.getElementById('agregar').value) || 0;
+        const stockActual = parseInt(document.getElementById('stock').value) || 0;
+        document.getElementById('stock').value = stockActual + agregar;
+        document.getElementById('agregar').value = 0;
+        actualizarEstado();
+    }
+    
+    function restarStock() {
+        const restar = parseInt(document.getElementById('restar').value) || 0;
+        const stockActual = parseInt(document.getElementById('stock').value) || 0;
+        const nuevoStock = Math.max(0, stockActual - restar);
+        document.getElementById('stock').value = nuevoStock;
+        document.getElementById('restar').value = 0;
+        actualizarEstado();
+    }
+    
+    function actualizarEstado() {
+        const stock = parseInt(document.getElementById('stock').value) || 0;
+        const nivelMinimo = parseInt(document.getElementById('nivel_minimo').value) || 0;
+        const estadoDiv = document.getElementById('estadoInventario');
+        const estadoTexto = document.getElementById('estadoTexto');
+        
+        if (stock < nivelMinimo) {
+            estadoDiv.className = 'alert alert-danger';
+            estadoTexto.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> Crítico - Stock por debajo del nivel mínimo';
+        } else if (stock < nivelMinimo * 1.5) {
+            estadoDiv.className = 'alert alert-warning';
+            estadoTexto.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> Bajo - Se recomienda reabastecer pronto';
+        } else {
+            estadoDiv.className = 'alert alert-success';
+            estadoTexto.innerHTML = '<i class="bi bi-check-circle-fill"></i> Normal - Stock suficiente';
+        }
+    }
+    
+    // Actualizar estado al cargar y al cambiar valores
+    document.addEventListener('DOMContentLoaded', actualizarEstado);
+    document.getElementById('stock').addEventListener('input', actualizarEstado);
+    document.getElementById('nivel_minimo').addEventListener('input', actualizarEstado);
+</script>
+{% endblock %}

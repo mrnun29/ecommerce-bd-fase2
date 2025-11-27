@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}Procesar Venta - E-Commerce{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h2><i class="bi bi-cart-plus"></i> Procesar Nueva Venta</h2>
+        <p class="text-muted">Selecciona los productos y cantidades para procesar la venta</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('procesar_venta') }}" id="ventaForm">
+                    <h5 class="mb-3">Productos</h5>
+                    
+                    <div id="productosContainer">
+                        <div class="row mb-3 producto-item">
+                            <div class="col-md-7">
+                                <label class="form-label">Producto</label>
+                                <select name="productos[]" class="form-select producto-select" required>
+                                    <option value="">Seleccionar producto...</option>
+                                    {% for producto in productos %}
+                                    <option value="{{ producto.id_producto }}" 
+                                            data-precio="{{ producto.precio }}"
+                                            data-stock="{{ producto.stock }}">
+                                        {{ producto.nombre }} - ${{ "%.2f"|format(producto.precio) }} (Stock: {{ producto.stock }})
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Cantidad</label>
+                                <input type="number" name="cantidades[]" class="form-control cantidad-input" 
+                                       min="1" value="1" required>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-danger btn-sm w-100 remove-producto" disabled>
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-secondary mb-3" id="addProducto">
+                        <i class="bi bi-plus-circle"></i> Agregar Producto
+                    </button>
+
+                    <hr>
+
+                    <h5 class="mb-3">Método de Pago</h5>
+                    <div class="mb-3">
+                        <select name="tipo_pago" id="tipoPago" class="form-select" required>
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
+                            <option value="Transferencia">Transferencia Bancaria</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Detalles de Pago -->
+                    <div id="detallesPago" class="mb-3" style="display: none;">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <!-- Efectivo -->
+                                <div id="pagoEfectivo" style="display: none;">
+                                    <h6><i class="bi bi-cash-coin"></i> Pago en Efectivo</h6>
+                                    <p class="text-muted small">Se generará un folio de pago para el cliente.</p>
+                                </div>
+                                
+                                <!-- Tarjeta -->
+                                <div id="pagoTarjeta" style="display: none;">
+                                    <h6><i class="bi bi-credit-card"></i> Pago con Tarjeta</h6>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-2">
+                                            <input type="text" class="form-control" placeholder="Número de tarjeta" 
+                                                   maxlength="16" pattern="[0-9]{16}">
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <input type="text" class="form-control" placeholder="MM/AA" maxlength="5">
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <input type="text" class="form-control" placeholder="CVV" maxlength="3">
+                                        </div>
+                                        <div class="col-12">
+                                            <input type="text" class="form-control" placeholder="Nombre en la tarjeta">
+                                        </div>
+                                    </div>
+                                    <div class="alert alert-success mt-2 mb-0">
+                                        <i class="bi bi-shield-check"></i> <small>Modo demo: datos no reales</small>
+                                    </div>
+                                </div>
+                                
+                                <!-- Transferencia -->
+                                <div id="pagoTransferencia" style="display: none;">
+                                    <h6><i class="bi bi-bank"></i> Transferencia Bancaria</h6>
+                                    <div class="mb-2">
+                                        <label class="form-label small">Número de referencia</label>
+                                        <input type="text" class="form-control" placeholder="Ej: REF-123456">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label small">Banco</label>
+                                        <select class="form-select">
+                                            <option>BBVA</option>
+                                            <option>Santander</option>
+                                            <option>Banorte</option>
+                                            <option>Otro</option>
+                                        </select>
+                                    </div>
+                                    <div class="alert alert-info mt-2 mb-0">
+                                        <i class="bi bi-info-circle"></i> <small>Modo demo: datos no reales</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4>Total: <span id="totalVenta">$0.00</span></h4>
+                        <div>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary me-2">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Procesar Venta
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-info-circle"></i> Información</h5>
+                <p class="card-text">
+                    Selecciona los productos que el cliente desea comprar y las cantidades.
+                </p>
+                <p class="card-text">
+                    El inventario se actualizará automáticamente al procesar la venta.
+                </p>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <small>Verifica el stock disponible antes de procesar la venta.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('productosContainer');
+    const addBtn = document.getElementById('addProducto');
+    const tipoPago = document.getElementById('tipoPago');
+    const detallesPago = document.getElementById('detallesPago');
+    
+    // Manejar cambio de método de pago
+    tipoPago.addEventListener('change', function() {
+        const valor = this.value;
+        
+        // Ocultar todos los detalles
+        document.getElementById('pagoEfectivo').style.display = 'none';
+        document.getElementById('pagoTarjeta').style.display = 'none';
+        document.getElementById('pagoTransferencia').style.display = 'none';
+        
+        // Mostrar el contenedor de detalles
+        detallesPago.style.display = 'block';
+        
+        // Mostrar el detalle correspondiente
+        if (valor === 'Efectivo') {
+            document.getElementById('pagoEfectivo').style.display = 'block';
+        } else if (valor === 'Tarjeta') {
+            document.getElementById('pagoTarjeta').style.display = 'block';
+        } else if (valor === 'Transferencia') {
+            document.getElementById('pagoTransferencia').style.display = 'block';
+        }
+    });
+    
+    function updateTotal() {
+        let total = 0;
+        document.querySelectorAll('.producto-item').forEach(item => {
+            const select = item.querySelector('.producto-select');
+            const cantidad = parseInt(item.querySelector('.cantidad-input').value) || 0;
+            const precio = parseFloat(select.options[select.selectedIndex]?.dataset.precio || 0);
+            total += precio * cantidad;
+        });
+        document.getElementById('totalVenta').textContent = '$' + total.toFixed(2);
+    }
+    
+    function updateRemoveButtons() {
+        const items = document.querySelectorAll('.producto-item');
+        items.forEach((item, index) => {
+            const removeBtn = item.querySelector('.remove-producto');
+            removeBtn.disabled = items.length === 1;
+        });
+    }
+    
+    addBtn.addEventListener('click', function() {
+        const firstItem = container.querySelector('.producto-item');
+        const newItem = firstItem.cloneNode(true);
+        
+        // Reset values
+        newItem.querySelector('.producto-select').selectedIndex = 0;
+        newItem.querySelector('.cantidad-input').value = 1;
+        
+        // Add remove functionality
+        newItem.querySelector('.remove-producto').addEventListener('click', function() {
+            newItem.remove();
+            updateRemoveButtons();
+            updateTotal();
+        });
+        
+        // Add change listeners
+        newItem.querySelector('.producto-select').addEventListener('change', updateTotal);
+        newItem.querySelector('.cantidad-input').addEventListener('input', updateTotal);
+        
+        container.appendChild(newItem);
+        updateRemoveButtons();
+    });
+    
+    // Add listeners to first item
+    container.querySelector('.producto-select').addEventListener('change', updateTotal);
+    container.querySelector('.cantidad-input').addEventListener('input', updateTotal);
+    
+    // Setup remove for first item
+    container.querySelector('.remove-producto').addEventListener('click', function() {
+        if (document.querySelectorAll('.producto-item').length > 1) {
+            this.closest('.producto-item').remove();
+            updateRemoveButtons();
+            updateTotal();
+        }
+    });
+    
+    updateRemoveButtons();
+});
+</script>
+{% endblock %}

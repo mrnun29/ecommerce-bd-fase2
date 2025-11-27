@@ -8,10 +8,12 @@ from datetime import datetime
 class Pedido:
     
     @staticmethod
-    def crear(id_cliente, productos):
+    def crear(id_usuario, productos, procesado_por=None):
         """
         Crear un nuevo pedido con productos
+        id_usuario: usuario para quien se crea el pedido
         productos: lista de dict con {id_producto, cantidad, precio_unitario}
+        procesado_por: id del trabajador que procesa el pedido (opcional)
         """
         try:
             # Calcular total
@@ -19,14 +21,15 @@ class Pedido:
             
             # Crear pedido
             query_pedido = """
-                INSERT INTO PEDIDO (total, fecha, estado, id_cliente)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO PEDIDO (total, fecha, estado, id_usuario, procesado_por)
+                VALUES (%s, %s, %s, %s, %s)
             """
             id_pedido = db.execute_query(query_pedido, (
                 total,
                 datetime.now(),
                 'Pendiente',
-                id_cliente
+                id_usuario,
+                procesado_por
             ))
             
             if not id_pedido:
@@ -66,11 +69,11 @@ class Pedido:
     def obtener_por_id(id_pedido):
         """Obtener pedido con sus detalles"""
         query = """
-            SELECT p.*, c.nombre as cliente_nombre
+            SELECT p.*, u.nombre as cliente_nombre, 
+                   t.nombre as trabajador_nombre
             FROM PEDIDO p
-            JOIN CLIENTE cl ON p.id_cliente = cl.id_cliente
-            JOIN USUARIO u ON cl.id_usuario = u.id_usuario
-            JOIN (SELECT id_usuario, nombre FROM USUARIO) c ON c.id_usuario = u.id_usuario
+            JOIN USUARIO u ON p.id_usuario = u.id_usuario
+            LEFT JOIN USUARIO t ON p.procesado_por = t.id_usuario
             WHERE p.id_pedido = %s
         """
         return db.fetch_one(query, (id_pedido,))
@@ -79,25 +82,38 @@ class Pedido:
     def obtener_todos():
         """Obtener todos los pedidos"""
         query = """
-            SELECT p.*, u.nombre as cliente_nombre
+            SELECT p.*, u.nombre as cliente_nombre,
+                   t.nombre as trabajador_nombre
             FROM PEDIDO p
-            JOIN CLIENTE c ON p.id_cliente = c.id_cliente
-            JOIN USUARIO u ON c.id_usuario = u.id_usuario
+            JOIN USUARIO u ON p.id_usuario = u.id_usuario
+            LEFT JOIN USUARIO t ON p.procesado_por = t.id_usuario
             ORDER BY p.fecha DESC
         """
         return db.fetch_query(query)
     
     @staticmethod
-    def obtener_por_cliente(id_cliente):
-        """Obtener pedidos de un cliente específico"""
+    def obtener_por_usuario(id_usuario):
+        """Obtener pedidos de un usuario específico"""
         query = """
-            SELECT p.*
+            SELECT p.*, t.nombre as trabajador_nombre
             FROM PEDIDO p
-            JOIN CLIENTE c ON p.id_cliente = c.id_cliente
-            WHERE c.id_usuario = %s
+            LEFT JOIN USUARIO t ON p.procesado_por = t.id_usuario
+            WHERE p.id_usuario = %s
             ORDER BY p.fecha DESC
         """
-        return db.fetch_query(query, (id_cliente,))
+        return db.fetch_query(query, (id_usuario,))
+    
+    @staticmethod
+    def obtener_por_trabajador(id_trabajador):
+        """Obtener pedidos procesados por un trabajador específico"""
+        query = """
+            SELECT p.*, u.nombre as cliente_nombre
+            FROM PEDIDO p
+            JOIN USUARIO u ON p.id_usuario = u.id_usuario
+            WHERE p.procesado_por = %s
+            ORDER BY p.fecha DESC
+        """
+        return db.fetch_query(query, (id_trabajador,))
     
     @staticmethod
     def obtener_productos_pedido(id_pedido):
@@ -139,17 +155,18 @@ class Pedido:
         return db.fetch_one(query, (fecha_inicio, fecha_fin))
     
     @staticmethod
-    def obtener_gasto_promedio_cliente():
-        """Calcular gasto promedio por cliente"""
+    def obtener_estadisticas_ventas():
+        """Obtener estadísticas de ventas"""
         query = """
-            SELECT c.id_cliente, u.nombre, 
-                   AVG(p.total) as gasto_promedio,
-                   COUNT(p.id_pedido) as num_pedidos
-            FROM CLIENTE c
-            JOIN USUARIO u ON c.id_usuario = u.id_usuario
-            LEFT JOIN PEDIDO p ON c.id_cliente = p.id_cliente
-            GROUP BY c.id_cliente
-            ORDER BY gasto_promedio DESC
+            SELECT u.id_usuario, u.nombre,
+                   COUNT(p.id_pedido) as num_pedidos,
+                   SUM(p.total) as total_gastado,
+                   AVG(p.total) as gasto_promedio
+            FROM USUARIO u
+            LEFT JOIN PEDIDO p ON u.id_usuario = p.id_usuario
+            WHERE p.estado != 'Cancelado' OR p.estado IS NULL
+            GROUP BY u.id_usuario
+            ORDER BY total_gastado DESC
         """
         return db.fetch_query(query)
 

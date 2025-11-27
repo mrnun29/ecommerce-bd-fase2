@@ -48,12 +48,12 @@
     </div>
 
     <div class="col-md-3 mb-4">
-        <div class="card bg-info text-white shadow">
+        <div class="card bg-danger text-white shadow">
             <div class="card-body">
-                <h6 class="text-uppercase mb-1">Stock Bajo</h6>
-                <h2 class="mb-0"><i class="bi bi-exclamation-triangle"></i></h2>
-                <a href="{{ url_for('productos_stock_bajo') }}" class="btn btn-light btn-sm mt-3 w-100">
-                    Ver Alertas
+                <h6 class="text-uppercase mb-1">Inventario</h6>
+                <h2 class="mb-0"><i class="bi bi-boxes"></i></h2>
+                <a href="{{ url_for('inventario') }}" class="btn btn-light btn-sm mt-3 w-100">
+                    Gestionar
                 </a>
             </div>
         </div>
@@ -97,11 +97,25 @@
         <div class="card shadow-sm h-100">
             <div class="card-body">
                 <h5 class="card-title">
-                    <i class="bi bi-graph-up text-success"></i> Reportes
+                    <i class="bi bi-boxes text-danger"></i> Gestión de Inventario
                 </h5>
-                <p class="card-text">Ver estadísticas y análisis de ventas.</p>
-                <a href="{{ url_for('productos_lista') }}" class="btn btn-success">
-                    <i class="bi bi-bar-chart"></i> Ver Reportes
+                <p class="card-text">Controlar stock y niveles de productos.</p>
+                <a href="{{ url_for('inventario') }}" class="btn btn-danger">
+                    <i class="bi bi-box-seam"></i> Ver Inventario
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-people text-success"></i> Proveedores y Trabajadores
+                </h5>
+                <p class="card-text">Ver proveedores con sus usuarios vinculados.</p>
+                <a href="{{ url_for('proveedores_usuarios') }}" class="btn btn-success">
+                    <i class="bi bi-people"></i> Ver Usuarios
                 </a>
             </div>
         </div>

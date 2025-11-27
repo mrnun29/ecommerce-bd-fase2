@@ -5,15 +5,100 @@
 {% block content %}
 <div class="row mb-4">
     <div class="col-12">
-        <h2><i class="bi bi-cart-check"></i> Mis Pedidos</h2>
+        <h2><i class="bi bi-cart-check"></i> 
+            {% if session.rol == 'Trabajador' %}
+                Mis Ventas
+            {% else %}
+                Pedidos del Sistema
+            {% endif %}
+        </h2>
+        <p class="text-muted">
+            {% if session.rol == 'Trabajador' %}
+                Historial de ventas que has procesado
+            {% elif session.rol == 'Administrador' %}
+                Todos los pedidos del sistema
+            {% endif %}
+        </p>
     </div>
 </div>
 
 <div class="row">
     <div class="col-12">
-        <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> Modo DEMO - No hay pedidos registrados
-        </div>
+        {% if pedidos %}
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    {% if session.rol == 'Administrador' %}
+                                    <th>Procesado por</th>
+                                    {% endif %}
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pedido in pedidos %}
+                                <tr>
+                                    <td><strong>#{{ pedido.id_pedido }}</strong></td>
+                                    <td>{{ pedido.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>{{ pedido.cliente_nombre or 'Venta directa' }}</td>
+                                    {% if session.rol == 'Administrador' %}
+                                    <td>{{ pedido.trabajador_nombre or 'N/A' }}</td>
+                                    {% endif %}
+                                    <td class="text-primary"><strong>${{ "%.2f"|format(pedido.total) }}</strong></td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if pedido.estado == 'Entregado' %}bg-success
+                                            {% elif pedido.estado == 'Cancelado' %}bg-danger
+                                            {% elif pedido.estado == 'Enviado' %}bg-info
+                                            {% elif pedido.estado == 'Procesando' %}bg-warning
+                                            {% else %}bg-secondary{% endif %}">
+                                            {{ pedido.estado }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="{{ url_for('pedido_detalle', id=pedido.id_pedido) }}" 
+                                           class="btn btn-sm btn-primary">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> 
+                {% if session.rol == 'Trabajador' %}
+                    Aún no has procesado ninguna venta. 
+                    <a href="{{ url_for('ventas') }}" class="alert-link">Procesar primera venta</a>
+                {% else %}
+                    No hay pedidos registrados en el sistema.
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        {% if session.rol == 'Trabajador' %}
+            <a href="{{ url_for('ventas') }}" class="btn btn-success me-2">
+                <i class="bi bi-plus-circle"></i> Nueva Venta
+            </a>
+        {% endif %}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver al Dashboard
+        </a>
     </div>
 </div>
 {% endblock %}

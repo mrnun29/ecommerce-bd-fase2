@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Trabajador - E-Commerce{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h2><i class="bi bi-person-workspace"></i> Panel de Trabajador</h2>
+        <p class="text-muted">Bienvenido, {{ session.nombre }}</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card bg-success text-white shadow">
+            <div class="card-body">
+                <h6 class="text-uppercase mb-1">Procesar Venta</h6>
+                <h2 class="mb-0"><i class="bi bi-cart-plus"></i></h2>
+                <a href="{{ url_for('ventas') }}" class="btn btn-light btn-sm mt-3 w-100">
+                    Nueva Venta
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card bg-primary text-white shadow">
+            <div class="card-body">
+                <h6 class="text-uppercase mb-1">Mis Ventas</h6>
+                <h2 class="mb-0"><i class="bi bi-receipt"></i></h2>
+                <a href="{{ url_for('pedidos_lista') }}" class="btn btn-light btn-sm mt-3 w-100">
+                    Ver Historial
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card bg-info text-white shadow">
+            <div class="card-body">
+                <h6 class="text-uppercase mb-1">Inventario</h6>
+                <h2 class="mb-0"><i class="bi bi-box-seam"></i></h2>
+                <a href="{{ url_for('productos_lista') }}" class="btn btn-light btn-sm mt-3 w-100">
+                    Ver Productos
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <h4 class="mb-3">Acciones Rápidas</h4>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-cart-plus text-success"></i> Procesar Venta
+                </h5>
+                <p class="card-text">Registrar una nueva venta y reducir inventario automáticamente.</p>
+                <a href="{{ url_for('ventas') }}" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Nueva Venta
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-clock-history text-primary"></i> Historial de Ventas
+                </h5>
+                <p class="card-text">Ver todas las ventas que has procesado.</p>
+                <a href="{{ url_for('pedidos_lista') }}" class="btn btn-primary">
+                    <i class="bi bi-list-check"></i> Ver Historial
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-boxes text-info"></i> Consultar Inventario
+                </h5>
+                <p class="card-text">Revisar disponibilidad de productos y niveles de stock.</p>
+                <a href="{{ url_for('productos_lista') }}" class="btn btn-info">
+                    <i class="bi bi-search"></i> Ver Productos
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-success">
+            <i class="bi bi-check-circle"></i>
+            <strong>Permisos de Trabajador:</strong> Puedes procesar ventas, consultar inventario y ver tus ventas realizadas.
+        </div>
+    </div>
+</div>
+{% endblock %}

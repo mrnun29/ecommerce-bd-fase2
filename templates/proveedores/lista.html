@@ -5,15 +5,100 @@
 {% block content %}
 <div class="row mb-4">
     <div class="col-12">
-        <h2><i class="bi bi-truck"></i> Proveedores</h2>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2><i class="bi bi-truck"></i> Proveedores</h2>
+                <p class="text-muted">Gestión de proveedores del sistema</p>
+            </div>
+            <div>
+                <a href="{{ url_for('proveedor_crear') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Nuevo Proveedor
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="row">
     <div class="col-12">
-        <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> Modo DEMO - No hay proveedores registrados
-        </div>
+        {% if proveedores %}
+            <!-- Agrupar proveedores por empresa -->
+            {% set ns = namespace(prev_id=None) %}
+            {% for proveedor in proveedores %}
+                {% if ns.prev_id != proveedor.id_proveedor %}
+                    {% if ns.prev_id is not none %}
+                        </div></div></div>
+                    {% endif %}
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-building"></i> {{ proveedor.empresa }}
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong>Contacto:</strong> {{ proveedor.contacto }}</p>
+                                    <p class="mb-2">
+                                        <strong>Dirección:</strong> 
+                                        {{ proveedor.calle }} #{{ proveedor.numero }}, 
+                                        {{ proveedor.ciudad }}, CP {{ proveedor.codigo_postal }}
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong>Usuario vinculado:</strong></p>
+                    {% set ns.prev_id = proveedor.id_proveedor %}
+                {% endif %}
+                
+                {% if proveedor.id_usuario %}
+                    <div class="ms-3 mb-2">
+                        <i class="bi bi-person-badge text-success"></i> 
+                        <strong>{{ proveedor.nombre_usuario }}</strong>
+                        <br>
+                        <small class="text-muted ms-4">{{ proveedor.correo }}</small>
+                    </div>
+                {% else %}
+                    {% if loop.last or loop.nextitem.id_proveedor != proveedor.id_proveedor %}
+                        <div class="ms-3 mb-2">
+                            <i class="bi bi-person-x text-warning"></i> 
+                            <span class="text-muted">Sin usuario vinculado</span>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            
+            {% if proveedores %}
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <a href="{{ url_for('proveedores_stock_bajo') }}" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-exclamation-triangle"></i> Ver Stock Bajo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> 
+                No hay proveedores registrados. 
+                <a href="{{ url_for('proveedor_crear') }}" class="alert-link">Crear primer proveedor</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="{{ url_for('proveedores_usuarios') }}" class="btn btn-success me-2">
+            <i class="bi bi-people"></i> Ver Proveedores y Trabajadores
+        </a>
+        <a href="{{ url_for('proveedores_stock_bajo') }}" class="btn btn-warning me-2">
+            <i class="bi bi-boxes"></i> Productos con Stock Bajo
+        </a>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver al Dashboard
+        </a>
     </div>
 </div>
 {% endblock %}

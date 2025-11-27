@@ -4,17 +4,26 @@ Aplicación Principal - Flask
 Fase 2: Implementación
 """
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from config.database import db
 from models.usuario import Usuario
 from models.producto import Producto
-from models.pedido import Pedido
+from models.pedido import Pedido, Pago
 from models.proveedor import Proveedor
 import os
+import hashlib
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'clave_secreta_desarrollo_2025')
+
+# Filtros personalizados para Jinja2
+@app.template_filter('obtener_productos_pedido')
+def obtener_productos_pedido_filter(id_pedido):
+    return Pedido.obtener_productos_pedido(id_pedido)
+
+@app.template_filter('obtener_pago_pedido')
+def obtener_pago_pedido_filter(id_pedido):
+    return Pago.obtener_por_pedido(id_pedido)
 
 # Conectar a la base de datos al iniciar
 @app.before_request
@@ -56,7 +65,10 @@ def login():
         
         usuario = Usuario.buscar_por_correo(correo)
         
-        if usuario and check_password_hash(usuario['password'], password):
+        # Hash MD5 de la contraseña
+        password_hash = hashlib.md5(password.encode()).hexdigest()
+        
+        if usuario and usuario['password'] == password_hash:
             session['user_id'] = usuario['id_usuario']
             session['nombre'] = usuario['nombre']
             session['rol'] = usuario['rol']
@@ -67,28 +79,6 @@ def login():
     
     return render_template('login.html')
 
-@app.route('/registro', methods=['GET', 'POST'])
-def registro():
-    """Registro de nuevo usuario"""
-    if request.method == 'POST':
-        datos = {
-            'nombre': request.form.get('nombre'),
-            'correo': request.form.get('correo'),
-            'password': generate_password_hash(request.form.get('password')),
-            'rol': 'Cliente',
-            'calle': request.form.get('calle'),
-            'numero': request.form.get('numero'),
-            'ciudad': request.form.get('ciudad'),
-            'codigo_postal': request.form.get('codigo_postal')
-        }
-        
-        if Usuario.crear(datos):
-            flash('Usuario registrado exitosamente', 'success')
-            return redirect(url_for('login'))
-        else:
-            flash('Error al registrar usuario', 'danger')
-    
-    return render_template('registro.html')
 
 @app.route('/logout')
 def logout():
@@ -107,10 +97,10 @@ def dashboard():
     
     if rol == 'Administrador':
         return render_template('dashboard_admin.html')
-    elif rol == 'Empleado':
-        return render_template('dashboard_empleado.html')
-    else:
-        return render_template('dashboard_cliente.html')
+    elif rol == 'Trabajador':
+        return render_template('dashboard_trabajador.html')
+    else:  # Proveedor
+        return render_template('dashboard_proveedor.html')
 
 # ============= PRODUCTOS =============
 
@@ -122,7 +112,7 @@ def productos_lista():
     return render_template('productos/lista.html', productos=productos)
 
 @app.route('/productos/crear', methods=['GET', 'POST'])
-@login_required(roles=['Administrador', 'Empleado'])
+@login_required(roles=['Administrador'])
 def producto_crear():
     """Crear nuevo producto"""
     if request.method == 'POST':
@@ -155,7 +145,7 @@ def producto_detalle(id):
         return redirect(url_for('productos_lista'))
 
 @app.route('/productos/<int:id>/editar', methods=['GET', 'POST'])
-@login_required(roles=['Administrador', 'Empleado'])
+@login_required(roles=['Administrador'])
 def producto_editar(id):
     """Editar producto"""
     producto = Producto.obtener_por_id(id)
@@ -194,10 +184,14 @@ def producto_eliminar(id):
 @login_required()
 def pedidos_lista():
     """Lista de pedidos"""
-    if session.get('rol') == 'Cliente':
-        pedidos = Pedido.obtener_por_cliente(session.get('user_id'))
-    else:
+    rol = session.get('rol')
+    if rol == 'Administrador':
         pedidos = Pedido.obtener_todos()
+    elif rol == 'Trabajador':
+        pedidos = Pedido.obtener_por_trabajador(session.get('user_id'))
+    else:  # Proveedor - no tiene acceso a pedidos
+        flash('No tienes permisos para ver pedidos', 'danger')
+        return redirect(url_for('dashboard'))
     return render_template('pedidos/lista.html', pedidos=pedidos)
 
 @app.route('/pedidos/<int:id>')
@@ -211,17 +205,41 @@ def pedido_detalle(id):
         flash('Pedido no encontrado', 'warning')
         return redirect(url_for('pedidos_lista'))
 
+@app.route('/pedidos/<int:id_pedido>/actualizar', methods=['POST'])
+@login_required(roles=['Administrador', 'Trabajador'])
+def actualizar_estado_pedido(id_pedido):
+    """Actualizar estado de un pedido"""
+    nuevo_estado = request.form.get('nuevo_estado')
+    if Pedido.actualizar_estado(id_pedido, nuevo_estado):
+        flash(f'Estado actualizado a {nuevo_estado}', 'success')
+    else:
+        flash('Error al actualizar estado', 'danger')
+    return redirect(url_for('pedido_detalle', id=id_pedido))
+
 # ============= PROVEEDORES =============
 
 @app.route('/proveedores')
-@login_required(roles=['Administrador', 'Empleado'])
+@login_required(roles=['Administrador'])
 def proveedores_lista():
-    """Lista de proveedores"""
-    proveedores = Proveedor.obtener_todos()
+    """Lista de proveedores con sus usuarios"""
+    proveedores = Proveedor.obtener_proveedores_con_usuarios()
     return render_template('proveedores/lista.html', proveedores=proveedores)
 
+@app.route('/proveedores/usuarios')
+@login_required(roles=['Administrador'])
+def proveedores_usuarios():
+    """Vista de proveedores y trabajadores"""
+    # Obtener todos los trabajadores
+    from models.usuario import Usuario
+    trabajadores = Usuario.obtener_por_rol('Trabajador')
+    
+    # Obtener proveedores con sus usuarios
+    proveedores = Proveedor.obtener_proveedores_con_usuarios()
+    
+    return render_template('proveedores/usuarios.html', proveedores=proveedores, trabajadores=trabajadores)
+
 @app.route('/proveedores/crear', methods=['GET', 'POST'])
-@login_required(roles=['Administrador', 'Empleado'])
+@login_required(roles=['Administrador'])
 def proveedor_crear():
     """Crear nuevo proveedor"""
     if request.method == 'POST':
@@ -242,6 +260,147 @@ def proveedor_crear():
     
     return render_template('proveedores/crear.html')
 
+@app.route('/proveedores/stock-bajo')
+@login_required(roles=['Administrador', 'Proveedor'])
+def proveedores_stock_bajo():
+    """Ver productos con stock bajo para reabastecer"""
+    productos = Producto.obtener_stock_bajo()
+    proveedores = Proveedor.obtener_todos()
+    return render_template('proveedores/stock_bajo.html', productos=productos, proveedores=proveedores)
+
+@app.route('/proveedores/reabastecer', methods=['POST'])
+@login_required(roles=['Administrador', 'Proveedor'])
+def reabastecer_producto():
+    """Reabastecer un producto"""
+    id_producto = int(request.form.get('id_producto'))
+    id_proveedor = int(request.form.get('id_proveedor'))
+    cantidad = int(request.form.get('cantidad'))
+    
+    # Registrar abastecimiento
+    if Proveedor.abastecer_producto(id_proveedor, id_producto, cantidad):
+        flash(f'Producto reabastecido con {cantidad} unidades', 'success')
+    else:
+        flash('Error al reabastecer producto', 'danger')
+    
+    return redirect(url_for('proveedores_stock_bajo'))
+
+
+# ============= VENTAS (TRABAJADORES) =============
+
+@app.route('/ventas')
+@login_required(roles=['Trabajador'])
+def ventas():
+    """Interfaz de ventas para trabajadores"""
+    productos = Producto.obtener_todos()
+    return render_template('ventas/crear.html', productos=productos)
+
+@app.route('/ventas/procesar', methods=['POST'])
+@login_required(roles=['Trabajador'])
+def procesar_venta():
+    """Procesar una venta directa"""
+    try:
+        # Obtener productos del formulario
+        productos_ids = request.form.getlist('productos[]')
+        cantidades = request.form.getlist('cantidades[]')
+        
+        if not productos_ids:
+            flash('Debes seleccionar al menos un producto', 'warning')
+            return redirect(url_for('ventas'))
+        
+        # Preparar lista de productos
+        productos = []
+        for i, id_prod in enumerate(productos_ids):
+            if id_prod and cantidades[i]:
+                producto = Producto.obtener_por_id(int(id_prod))
+                if producto:
+                    productos.append({
+                        'id_producto': producto['id_producto'],
+                        'cantidad': int(cantidades[i]),
+                        'precio_unitario': producto['precio']
+                    })
+        
+        # Crear pedido (sin cliente específico, procesado por trabajador)
+        id_pedido = Pedido.crear(
+            id_usuario=session['user_id'],  # El trabajador mismo
+            productos=productos,
+            procesado_por=session['user_id']
+        )
+        
+        if id_pedido:
+            # Procesar pago
+            tipo_pago = request.form.get('tipo_pago', 'Efectivo')
+            total = sum(p['cantidad'] * p['precio_unitario'] for p in productos)
+            
+            detalles_pago = {}
+            if tipo_pago == 'Efectivo':
+                from datetime import datetime, timedelta
+                detalles_pago = {
+                    'folio': id_pedido,  # Usar el ID del pedido como folio
+                    'fecha_limite': datetime.now() + timedelta(days=1)
+                }
+            elif tipo_pago == 'Tarjeta':
+                detalles_pago = {
+                    'num_tarjeta': '4111111111111111',  # Número fake
+                    'banco': 'DEMO',
+                    'vencimiento': '2025-12-31',
+                    'cuenta': '1234'
+                }
+            elif tipo_pago == 'Transferencia':
+                detalles_pago = {
+                    'referencia': f'REF{id_pedido}'
+                }
+            
+            id_pago = Pago.crear(id_pedido, total, tipo_pago, detalles_pago)
+            
+            if id_pago:
+                flash(f'Venta procesada exitosamente. Pedido #{id_pedido}', 'success')
+                return redirect(url_for('pedido_detalle', id=id_pedido))
+            else:
+                flash('Error al procesar el pago', 'danger')
+        else:
+            flash('Error al procesar la venta', 'danger')
+    except Exception as e:
+        flash(f'Error: {str(e)}', 'danger')
+    
+    return redirect(url_for('ventas'))
+
+# ============= INVENTARIO (ADMINISTRADOR) =============
+
+@app.route('/inventario')
+@login_required(roles=['Administrador', 'Proveedor'])
+def inventario():
+    """Ver y gestionar inventario"""
+    productos = Producto.obtener_todos()
+    productos_bajo_stock = Producto.obtener_stock_bajo()
+    return render_template('inventario/lista.html', productos=productos, productos_bajo_stock=productos_bajo_stock)
+
+@app.route('/inventario/<int:id_producto>/editar', methods=['GET', 'POST'])
+@login_required(roles=['Administrador'])
+def inventario_editar(id_producto):
+    """Editar inventario de un producto"""
+    producto = Producto.obtener_por_id(id_producto)
+    
+    if request.method == 'POST':
+        nuevo_stock = int(request.form.get('stock'))
+        nivel_minimo = int(request.form.get('nivel_minimo'))
+        
+        datos = {
+            'nombre': producto['nombre'],
+            'descripcion': producto['descripcion'],
+            'precio': producto['precio'],
+            'stock': nuevo_stock,
+            'nivel_minimo': nivel_minimo,
+            'imagen': producto['imagen']
+        }
+        
+        if Producto.actualizar(id_producto, datos):
+            flash('Inventario actualizado', 'success')
+            return redirect(url_for('inventario'))
+        else:
+            flash('Error al actualizar inventario', 'danger')
+    
+    return render_template('inventario/editar.html', producto=producto)
+
 # ============= API/BÚSQUEDAS =============
 
 @app.route('/api/productos/buscar')
@@ -253,7 +412,7 @@ def buscar_productos():
     return {'productos': productos}
 
 @app.route('/api/productos/stock-bajo')
-@login_required(roles=['Administrador', 'Empleado'])
+@login_required(roles=['Administrador', 'Proveedor'])
 def productos_stock_bajo():
     """Obtener productos con stock bajo"""
     productos = Producto.obtener_stock_bajo()

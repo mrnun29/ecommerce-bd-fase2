@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Inventario{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h2><i class="bi bi-box-seam"></i> Gestión de Inventario</h2>
+        <p class="text-muted">Controla el stock de todos los productos</p>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="{{ url_for('producto_crear') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Agregar Producto
+        </a>
+        <a href="{{ url_for('proveedores_stock_bajo') }}" class="btn btn-warning">
+            <i class="bi bi-exclamation-triangle"></i> Stock Bajo
+        </a>
+    </div>
+</div>
+
+<!-- Alertas de Stock Bajo -->
+{% if productos_bajo_stock %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong><i class="bi bi-exclamation-triangle-fill"></i> Advertencia:</strong> 
+    Hay {{ productos_bajo_stock|length }} producto(s) con stock por debajo del nivel mínimo.
+    <a href="{{ url_for('proveedores_stock_bajo') }}" class="alert-link">Ver detalles</a>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endif %}
+
+<!-- Estadísticas -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-boxes display-4 text-primary"></i>
+                <h5 class="mt-3">Total Productos</h5>
+                <h2 class="text-primary">{{ productos|length }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-check-circle display-4 text-success"></i>
+                <h5 class="mt-3">Stock Suficiente</h5>
+                <h2 class="text-success">{{ productos|length - productos_bajo_stock|length }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-exclamation-triangle display-4 text-warning"></i>
+                <h5 class="mt-3">Stock Bajo</h5>
+                <h2 class="text-warning">{{ productos_bajo_stock|length }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-currency-dollar display-4 text-info"></i>
+                <h5 class="mt-3">Valor Inventario</h5>
+                <h2 class="text-info">
+                    ${% set total = namespace(value=0) %}
+                    {% for p in productos %}
+                        {% set total.value = total.value + (p.stock * p.precio) %}
+                    {% endfor %}
+                    {{ "%.2f"|format(total.value) }}
+                </h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de Inventario -->
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Inventario de Productos</h5>
+    </div>
+    <div class="card-body">
+        <div class="mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre...">
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover" id="inventoryTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                        <th>Stock Actual</th>
+                        <th>Nivel Mínimo</th>
+                        <th>Estado</th>
+                        <th>Valor Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                    <tr>
+                        <td>{{ producto.id_producto }}</td>
+                        <td>
+                            <strong>{{ producto.nombre }}</strong><br>
+                            <small class="text-muted">{{ producto.descripcion[:40] }}...</small>
+                        </td>
+                        <td>${{ "%.2f"|format(producto.precio) }}</td>
+                        <td>
+                            {% if producto.stock < producto.nivel_minimo %}
+                                <span class="badge bg-danger fs-6">{{ producto.stock }}</span>
+                            {% elif producto.stock < (producto.nivel_minimo * 1.5) %}
+                                <span class="badge bg-warning text-dark fs-6">{{ producto.stock }}</span>
+                            {% else %}
+                                <span class="badge bg-success fs-6">{{ producto.stock }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ producto.nivel_minimo }}</span>
+                        </td>
+                        <td>
+                            {% if producto.stock < producto.nivel_minimo %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-exclamation-triangle"></i> Crítico
+                                </span>
+                            {% elif producto.stock < (producto.nivel_minimo * 1.5) %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="bi bi-exclamation-circle"></i> Bajo
+                                </span>
+                            {% else %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle"></i> Normal
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td><strong>${{ "%.2f"|format(producto.stock * producto.precio) }}</strong></td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('inventario_editar', id_producto=producto.id_producto) }}" 
+                                   class="btn btn-sm btn-primary" title="Editar inventario">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{{ url_for('producto_detalle', id=producto.id_producto) }}" 
+                                   class="btn btn-sm btn-info" title="Ver detalles">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                {% if session.rol == 'Administrador' %}
+                                <a href="{{ url_for('producto_editar', id=producto.id_producto) }}" 
+                                   class="btn btn-sm btn-secondary" title="Editar producto">
+                                    <i class="bi bi-gear"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Gráfico de distribución de stock (placeholder) -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="bi bi-graph-up"></i> Resumen de Estado</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                            <h4 class="mt-2">{{ productos|length - productos_bajo_stock|length }}</h4>
+                            <p class="text-muted">Productos en buen estado</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 3rem;"></i>
+                            <h4 class="mt-2">{{ productos_bajo_stock|length }}</h4>
+                            <p class="text-muted">Requieren atención</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <i class="bi bi-truck text-primary" style="font-size: 3rem;"></i>
+                            <h4 class="mt-2">Próximamente</h4>
+                            <p class="text-muted">Órdenes en camino</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Búsqueda en tiempo real
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#inventoryTable tbody tr');
+        
+        rows.forEach(row => {
+            const productName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            if (productName.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Proveedores y Trabajadores{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="bi bi-people"></i> Proveedores y Trabajadores</h1>
+        <p class="text-muted">Gestión de proveedores y sus usuarios vinculados</p>
+    </div>
+</div>
+
+<!-- Proveedores con Usuarios -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-truck"></i> Proveedores</h5>
+            </div>
+            <div class="card-body">
+                {% if proveedores %}
+                    {% set current_proveedor = namespace(id=None) %}
+                    {% for prov in proveedores %}
+                        {% if current_proveedor.id != prov.id_proveedor %}
+                            {% if current_proveedor.id is not none %}
+                                </ul>
+                            </div>
+                            </div>
+                            {% endif %}
+                            {% set current_proveedor.id = prov.id_proveedor %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ prov.empresa }}</h5>
+                                    <p class="card-text text-muted mb-2">
+                                        <small>Contacto: {{ prov.contacto }}</small><br>
+                                        <small>{{ prov.calle }} #{{ prov.numero }}, {{ prov.ciudad }}</small>
+                                    </p>
+                                    <h6 class="mt-3">Usuario vinculado:</h6>
+                                    <ul class="list-unstyled mb-0">
+                        {% endif %}
+                        {% if prov.id_usuario %}
+                            <li class="ms-3">
+                                <i class="bi bi-person-badge text-success"></i> 
+                                {{ prov.nombre_usuario }} 
+                                <small class="text-muted">({{ prov.correo }})</small>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if current_proveedor.id is not none %}
+                        </ul>
+                    </div>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <p class="text-muted">No hay proveedores registrados.</p>
+                {% endif %}
+                
+                <div class="mt-3">
+                    <a href="{{ url_for('proveedor_crear') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Nuevo Proveedor
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Trabajadores -->
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-person-workspace"></i> Trabajadores</h5>
+            </div>
+            <div class="card-body">
+                {% if trabajadores %}
+                    <div class="list-group">
+                        {% for trabajador in trabajadores %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ trabajador.nombre }}</h6>
+                                <small class="text-muted">ID: {{ trabajador.id_usuario }}</small>
+                            </div>
+                            <p class="mb-1">
+                                <small><i class="bi bi-envelope"></i> {{ trabajador.correo }}</small>
+                            </p>
+                            <small class="text-muted">
+                                <i class="bi bi-geo-alt"></i> 
+                                {{ trabajador.calle }} #{{ trabajador.numero }}, {{ trabajador.ciudad }}
+                            </small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No hay trabajadores registrados.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

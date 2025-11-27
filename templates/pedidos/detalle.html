@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle del Pedido #{{ pedido.id_pedido }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="bi bi-receipt"></i> Pedido #{{ pedido.id_pedido }}</h1>
+        <p class="text-muted">Detalles completos del pedido</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Información del Pedido -->
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Información del Pedido</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Fecha:</strong> {{ pedido.fecha.strftime('%d/%m/%Y %H:%M') }}</p>
+                        <p><strong>Cliente:</strong> {{ pedido.cliente_nombre or 'Venta directa' }}</p>
+                        <p><strong>Estado:</strong> 
+                            <span class="badge 
+                                {% if pedido.estado == 'Entregado' %}bg-success
+                                {% elif pedido.estado == 'Cancelado' %}bg-danger
+                                {% elif pedido.estado == 'Enviado' %}bg-info
+                                {% else %}bg-warning{% endif %}">
+                                {{ pedido.estado }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Procesado por:</strong> {{ pedido.trabajador_nombre or 'N/A' }}</p>
+                        <p><strong>Total:</strong> <span class="text-primary fs-4">${{ "%.2f"|format(pedido.total) }}</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Productos del Pedido -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0"><i class="bi bi-bag"></i> Productos</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th class="text-center">Cantidad</th>
+                                <th class="text-end">Precio Unit.</th>
+                                <th class="text-end">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set productos = pedido.id_pedido | obtener_productos_pedido %}
+                            {% for producto in productos %}
+                            <tr>
+                                <td>
+                                    <strong>{{ producto.nombre }}</strong><br>
+                                    <small class="text-muted">{{ producto.descripcion }}</small>
+                                </td>
+                                <td class="text-center">{{ producto.cantidad }}</td>
+                                <td class="text-end">${{ "%.2f"|format(producto.precio_unitario) }}</td>
+                                <td class="text-end"><strong>${{ "%.2f"|format(producto.subtotal) }}</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                <td class="text-end"><h5 class="text-primary mb-0">${{ "%.2f"|format(pedido.total) }}</h5></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel lateral -->
+    <div class="col-md-4">
+        <!-- Información de Pago -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-credit-card"></i> Información de Pago</h5>
+            </div>
+            <div class="card-body">
+                {% set pago = pedido.id_pedido | obtener_pago_pedido %}
+                {% if pago %}
+                    <p><strong>Método:</strong> 
+                        {% if pago.tipo_pago == 'Efectivo' %}
+                            <i class="bi bi-cash-coin"></i> {{ pago.tipo_pago }}
+                        {% elif pago.tipo_pago == 'Tarjeta' %}
+                            <i class="bi bi-credit-card"></i> {{ pago.tipo_pago }}
+                        {% else %}
+                            <i class="bi bi-bank"></i> {{ pago.tipo_pago }}
+                        {% endif %}
+                    </p>
+                    <p><strong>Fecha:</strong> {{ pago.fecha.strftime('%d/%m/%Y %H:%M') }}</p>
+                    <p><strong>Monto:</strong> <span class="text-success">${{ "%.2f"|format(pago.monto) }}</span></p>
+                    
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle"></i> Pago procesado exitosamente
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> Sin información de pago
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-gear"></i> Acciones</h5>
+            </div>
+            <div class="card-body">
+                {% if session.rol == 'Administrador' or session.rol == 'Trabajador' %}
+                <form method="POST" action="{{ url_for('actualizar_estado_pedido', id_pedido=pedido.id_pedido) }}" class="mb-3">
+                    <label class="form-label">Cambiar Estado:</label>
+                    <select name="nuevo_estado" class="form-select mb-2">
+                        <option value="Pendiente" {% if pedido.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                        <option value="Procesando" {% if pedido.estado == 'Procesando' %}selected{% endif %}>Procesando</option>
+                        <option value="Enviado" {% if pedido.estado == 'Enviado' %}selected{% endif %}>Enviado</option>
+                        <option value="Entregado" {% if pedido.estado == 'Entregado' %}selected{% endif %}>Entregado</option>
+                        <option value="Cancelado" {% if pedido.estado == 'Cancelado' %}selected{% endif %}>Cancelado</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-arrow-repeat"></i> Actualizar Estado
+                    </button>
+                </form>
+                {% endif %}
+                
+                <a href="{{ url_for('pedidos_lista') }}" class="btn btn-secondary w-100">
+                    <i class="bi bi-arrow-left"></i> Volver a Pedidos
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

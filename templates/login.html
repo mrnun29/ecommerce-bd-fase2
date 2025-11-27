@@ -13,6 +13,34 @@
                     <p class="text-muted">Accede a tu cuenta</p>
                 </div>
 
+                <!-- Botones de Acceso Rápido -->
+                <div class="mb-4">
+                    <p class="text-center text-muted mb-3">Acceso Rápido:</p>
+                    <form method="POST" action="{{ url_for('login') }}" class="mb-2">
+                        <input type="hidden" name="correo" value="admin@ecommerce.com">
+                        <input type="hidden" name="password" value="admin123">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-shield-lock-fill"></i> Administrador
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ url_for('login') }}" class="mb-2">
+                        <input type="hidden" name="correo" value="trabajador@ecommerce.com">
+                        <input type="hidden" name="password" value="trabajador123">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-person-workspace"></i> Trabajador
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ url_for('login') }}">
+                        <input type="hidden" name="correo" value="proveedor@ecommerce.com">
+                        <input type="hidden" name="password" value="proveedor123">
+                        <button type="submit" class="btn btn-info w-100">
+                            <i class="bi bi-truck"></i> Proveedor
+                        </button>
+                    </form>
+                </div>
+
+                <hr class="my-4">
+
                 <form method="POST" action="{{ url_for('login') }}">
                     <div class="mb-3">
                         <label for="correo" class="form-label">Correo Electrónico</label>
@@ -30,12 +58,6 @@
                         </button>
                     </div>
                 </form>
-
-                <hr class="my-4">
-
-                <div class="text-center">
-                    <p class="mb-0">¿No tienes cuenta? <a href="{{ url_for('registro') }}">Regístrate aquí</a></p>
-                </div>
             </div>
         </div>
     </div>

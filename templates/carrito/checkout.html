@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - E-Commerce{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-credit-card"></i> Información de Pago</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="checkoutForm">
+                    <h5 class="mb-3">Selecciona método de pago</h5>
+                    
+                    <div class="mb-3">
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="tipo_pago" id="pagoTarjeta" value="Tarjeta" checked>
+                            <label class="btn btn-outline-primary" for="pagoTarjeta">
+                                <i class="bi bi-credit-card"></i> Tarjeta
+                            </label>
+                            
+                            <input type="radio" class="btn-check" name="tipo_pago" id="pagoTransferencia" value="Transferencia">
+                            <label class="btn btn-outline-primary" for="pagoTransferencia">
+                                <i class="bi bi-bank"></i> Transferencia
+                            </label>
+                            
+                            <input type="radio" class="btn-check" name="tipo_pago" id="pagoEfectivo" value="Efectivo">
+                            <label class="btn btn-outline-primary" for="pagoEfectivo">
+                                <i class="bi bi-cash"></i> Efectivo
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Formulario Tarjeta -->
+                    <div id="formTarjeta" class="payment-form">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Número de Tarjeta</label>
+                                <input type="text" name="num_tarjeta" class="form-control" placeholder="1234 5678 9012 3456" maxlength="16">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Banco</label>
+                                <input type="text" name="banco" class="form-control" placeholder="Nombre del banco">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Fecha de Vencimiento</label>
+                                <input type="month" name="vencimiento" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">CVV</label>
+                                <input type="text" name="cuenta" class="form-control" placeholder="123" maxlength="4">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulario Transferencia -->
+                    <div id="formTransferencia" class="payment-form" style="display: none;">
+                        <div class="alert alert-info">
+                            <h6><i class="bi bi-info-circle"></i> Datos para Transferencia</h6>
+                            <p class="mb-1"><strong>Banco:</strong> Banco E-Commerce</p>
+                            <p class="mb-1"><strong>Cuenta:</strong> 1234567890</p>
+                            <p class="mb-1"><strong>CLABE:</strong> 012345678901234567</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Referencia de Pago</label>
+                            <input type="text" name="referencia" class="form-control" 
+                                   placeholder="Ingresa el número de referencia de tu transferencia">
+                        </div>
+                    </div>
+
+                    <!-- Formulario Efectivo -->
+                    <div id="formEfectivo" class="payment-form" style="display: none;">
+                        <div class="alert alert-warning">
+                            <h6><i class="bi bi-exclamation-triangle"></i> Pago en Efectivo</h6>
+                            <p class="mb-0">Se generará un código de pago para que puedas realizar el pago en efectivo en tiendas de conveniencia. Tienes 3 días para realizar el pago.</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-lock"></i> Confirmar y Pagar
+                        </button>
+                        <a href="{{ url_for('ver_carrito') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Volver al Carrito
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Resumen del Pedido</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="mb-3">Productos:</h6>
+                {% for id_producto, item in carrito.items() %}
+                <div class="d-flex justify-content-between mb-2">
+                    <span>{{ item.producto.nombre }} (x{{ item.cantidad }})</span>
+                    <span>${{ "%.2f"|format(item.cantidad * item.producto.precio) }}</span>
+                </div>
+                {% endfor %}
+                <hr>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal:</span>
+                    <span>${{ "%.2f"|format(total) }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Envío:</span>
+                    <span class="text-success">Gratis</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <strong>Total a Pagar:</strong>
+                    <strong class="text-success">${{ "%.2f"|format(total) }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6><i class="bi bi-shield-check"></i> Compra Segura</h6>
+                <p class="small text-muted mb-0">Tu información está protegida con encriptación SSL</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Cambiar formulario según método de pago
+    document.querySelectorAll('input[name="tipo_pago"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.payment-form').forEach(form => {
+                form.style.display = 'none';
+            });
+            
+            if (this.value === 'Tarjeta') {
+                document.getElementById('formTarjeta').style.display = 'block';
+            } else if (this.value === 'Transferencia') {
+                document.getElementById('formTransferencia').style.display = 'block';
+            } else if (this.value === 'Efectivo') {
+                document.getElementById('formEfectivo').style.display = 'block';
+            }
+        });
+    });
+</script>
+{% endblock %}

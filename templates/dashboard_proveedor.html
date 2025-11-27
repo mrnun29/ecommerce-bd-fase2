@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Proveedor - E-Commerce{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h2><i class="bi bi-truck"></i> Panel de Proveedor</h2>
+        <p class="text-muted">Bienvenido, {{ session.nombre }}</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card bg-info text-white shadow">
+            <div class="card-body">
+                <h6 class="text-uppercase mb-1">Inventario</h6>
+                <h2 class="mb-0"><i class="bi bi-boxes"></i></h2>
+                <a href="{{ url_for('inventario') }}" class="btn btn-light btn-sm mt-3 w-100">
+                    Ver Inventario
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card bg-warning text-white shadow">
+            <div class="card-body">
+                <h6 class="text-uppercase mb-1">Stock Bajo</h6>
+                <h2 class="mb-0"><i class="bi bi-exclamation-triangle"></i></h2>
+                <a href="{{ url_for('proveedores_stock_bajo') }}" class="btn btn-light btn-sm mt-3 w-100">
+                    Ver Alertas
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <h4 class="mb-3">Acciones de Proveedor</h4>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-eye text-info"></i> Consultar Inventario
+                </h5>
+                <p class="card-text">Ver el estado actual del inventario de todos los productos.</p>
+                <a href="{{ url_for('inventario') }}" class="btn btn-info">
+                    <i class="bi bi-search"></i> Ver Inventario
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-box-arrow-in-down text-warning"></i> Abastecer Productos
+                </h5>
+                <p class="card-text">Revisar productos con stock bajo y enviar abastecimientos.</p>
+                <a href="{{ url_for('proveedores_stock_bajo') }}" class="btn btn-warning">
+                    <i class="bi bi-truck"></i> Reabastecer
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-clipboard-data text-primary"></i> Productos Disponibles
+                </h5>
+                <p class="card-text">Consultar el catálogo completo de productos del sistema.</p>
+                <a href="{{ url_for('productos_lista') }}" class="btn btn-primary">
+                    <i class="bi bi-list-ul"></i> Ver Catálogo
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            <strong>Permisos de Proveedor:</strong> Puedes consultar el inventario y abastecer productos cuando el stock esté bajo.
+        </div>
+    </div>
+</div>
+{% endblock %}

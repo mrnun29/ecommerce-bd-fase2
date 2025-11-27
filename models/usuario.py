@@ -38,14 +38,6 @@ class Usuario:
                 id_direccion
             ))
             
-            # Si es cliente, crear registro en tabla CLIENTE
-            if id_usuario and datos.get('rol', 'Cliente') == 'Cliente':
-                query_cliente = """
-                    INSERT INTO CLIENTE (id_usuario, historial_compras)
-                    VALUES (%s, %s)
-                """
-                db.execute_query(query_cliente, (id_usuario, ''))
-            
             return id_usuario
         except Exception as e:
             print(f"Error creando usuario: {e}")
@@ -144,3 +136,15 @@ class Usuario:
             WHERE id_usuario = %s
         """
         return db.fetch_query(query, (id_usuario,))
+    
+    @staticmethod
+    def obtener_por_rol(rol):
+        """Obtener todos los usuarios de un rol específico"""
+        query = """
+            SELECT u.*, d.calle, d.numero, d.ciudad, d.codigo_postal
+            FROM USUARIO u
+            JOIN DIRECCION d ON u.id_direccion = d.id_direccion
+            WHERE u.rol = %s
+            ORDER BY u.nombre
+        """
+        return db.fetch_query(query, (rol,))

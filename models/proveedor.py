@@ -108,12 +108,19 @@ class Proveedor:
     def registrar_abastecimiento(id_proveedor, id_producto, cantidad):
         """Registrar abastecimiento de producto por proveedor"""
         try:
+            # Primero actualizar el stock del producto
+            query_stock = """
+                UPDATE PRODUCTO
+                SET stock = stock + %s
+                WHERE id_producto = %s
+            """
+            stock_result = db.execute_query(query_stock, (cantidad, id_producto))
+            print(f"Stock actualizado: producto {id_producto}, cantidad +{cantidad}, result: {stock_result}")
+            
+            # Luego registrar el abastecimiento en historial
             query = """
                 INSERT INTO AVASTECE (PRODUCTO_id_producto, PROVEEDOR_id_proveedor, fecha_abastecimiento, cantidad)
                 VALUES (%s, %s, %s, %s)
-                ON DUPLICATE KEY UPDATE
-                fecha_abastecimiento = VALUES(fecha_abastecimiento),
-                cantidad = cantidad + VALUES(cantidad)
             """
             result = db.execute_query(query, (
                 id_producto,
@@ -121,20 +128,19 @@ class Proveedor:
                 datetime.now(),
                 cantidad
             ))
+            print(f"Abastecimiento registrado: result: {result}")
             
-            # Actualizar stock del producto
-            if result:
-                query_stock = """
-                    UPDATE PRODUCTO
-                    SET stock = stock + %s
-                    WHERE id_producto = %s
-                """
-                db.execute_query(query_stock, (cantidad, id_producto))
-            
-            return result is not None
+            return stock_result is not None
         except Exception as e:
             print(f"Error registrando abastecimiento: {e}")
+            import traceback
+            traceback.print_exc()
             return False
+    
+    @staticmethod
+    def abastecer_producto(id_proveedor, id_producto, cantidad):
+        """Alias de registrar_abastecimiento para mejor legibilidad"""
+        return Proveedor.registrar_abastecimiento(id_proveedor, id_producto, cantidad)
     
     @staticmethod
     def obtener_productos_abastecidos(id_proveedor):
@@ -147,3 +153,18 @@ class Proveedor:
             ORDER BY a.fecha_abastecimiento DESC
         """
         return db.fetch_query(query, (id_proveedor,))
+    
+    @staticmethod
+    def obtener_proveedores_con_usuarios():
+        """Obtener todos los proveedores con sus usuarios vinculados"""
+        query = """
+            SELECT p.id_proveedor, p.contacto, p.empresa,
+                   d.calle, d.numero, d.ciudad, d.codigo_postal,
+                   u.id_usuario, u.nombre as nombre_usuario, u.correo
+            FROM PROVEEDOR p
+            JOIN DIRECCION d ON p.id_direccion = d.id_direccion
+            LEFT JOIN PROVEEDOR_USUARIO pu ON p.id_proveedor = pu.id_proveedor
+            LEFT JOIN USUARIO u ON pu.id_usuario = u.id_usuario
+            ORDER BY p.empresa, u.nombre
+        """
+        return db.fetch_query(query)

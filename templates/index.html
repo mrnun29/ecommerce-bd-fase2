@@ -12,10 +12,7 @@
             <p>Desarrollado para la Universidad Anáhuac Querétaro - Fase 2</p>
             {% if not session.user_id %}
             <div class="mt-4">
-                <a class="btn btn-primary btn-lg me-2" href="{{ url_for('registro') }}" role="button">
-                    <i class="bi bi-person-plus"></i> Registrarse
-                </a>
-                <a class="btn btn-outline-primary btn-lg" href="{{ url_for('login') }}" role="button">
+                <a class="btn btn-primary btn-lg" href="{{ url_for('login') }}" role="button">
                     <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
                 </a>
             </div>
@@ -50,13 +47,17 @@
                     </p>
                     <p class="card-text">
                         <small class="text-muted">
-                            Stock: {{ producto.stock }} unidades
+                            {% if producto.stock > 0 %}
+                                <i class="bi bi-check-circle text-success"></i> Stock: {{ producto.stock }} unidades
+                            {% else %}
+                                <i class="bi bi-x-circle text-danger"></i> Sin stock
+                            {% endif %}
                         </small>
                     </p>
                     {% if session.user_id %}
-                    <a href="{{ url_for('producto_detalle', id=producto.id_producto) }}" class="btn btn-outline-primary">
-                        Ver Detalles
-                    </a>
+                        <a href="{{ url_for('producto_detalle', id=producto.id_producto) }}" class="btn btn-outline-primary">
+                            Ver Detalles
+                        </a>
                     {% endif %}
                 </div>
             </div>
