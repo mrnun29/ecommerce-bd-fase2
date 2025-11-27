@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Usuario{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-person-plus"></i> Crear Nuevo Usuario</h2>
+        <p class="text-muted">Crear cuentas para trabajadores o proveedores</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('usuario_crear') }}">
+                    <h5 class="mb-3">Información Personal</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre" class="form-label">Nombre Completo *</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="correo" class="form-label">Correo Electrónico *</label>
+                            <input type="email" class="form-control" id="correo" name="correo" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">Contraseña *</label>
+                            <input type="password" class="form-control" id="password" name="password" required minlength="6">
+                            <small class="text-muted">Mínimo 6 caracteres</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="rol" class="form-label">Rol *</label>
+                            <select class="form-select" id="rol" name="rol" required>
+                                <option value="">Seleccionar rol...</option>
+                                <option value="Trabajador">Trabajador</option>
+                                <option value="Proveedor">Proveedor</option>
+                                <option value="Administrador">Administrador</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h5 class="mb-3">Dirección</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="calle" class="form-label">Calle *</label>
+                            <input type="text" class="form-control" id="calle" name="calle" required>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="numero" class="form-label">Número</label>
+                            <input type="number" class="form-control" id="numero" name="numero">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="ciudad" class="form-label">Ciudad *</label>
+                            <input type="text" class="form-control" id="ciudad" name="ciudad" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="codigo_postal" class="form-label">Código Postal *</label>
+                            <input type="text" class="form-control" id="codigo_postal" name="codigo_postal" required maxlength="5" pattern="[0-9]{5}">
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('usuarios_lista') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Crear Usuario
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-info-circle"></i> Información</h5>
+                <p class="card-text">
+                    <strong>Roles disponibles:</strong>
+                </p>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="bi bi-person-workspace text-success"></i> 
+                        <strong>Trabajador:</strong> Procesar ventas
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-truck text-info"></i> 
+                        <strong>Proveedor:</strong> Reabastecer productos
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-shield-lock text-danger"></i> 
+                        <strong>Administrador:</strong> Control total
+                    </li>
+                </ul>
+                <div class="alert alert-warning mt-3">
+                    <small><i class="bi bi-exclamation-triangle"></i> La contraseña se encriptará automáticamente</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

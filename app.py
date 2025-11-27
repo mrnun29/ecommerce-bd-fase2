@@ -238,6 +238,37 @@ def proveedores_usuarios():
     
     return render_template('proveedores/usuarios.html', proveedores=proveedores, trabajadores=trabajadores)
 
+@app.route('/usuarios/crear', methods=['GET', 'POST'])
+@login_required(roles=['Administrador'])
+def usuario_crear():
+    """Crear nuevo usuario (trabajador o proveedor)"""
+    if request.method == 'POST':
+        datos = {
+            'nombre': request.form.get('nombre'),
+            'correo': request.form.get('correo'),
+            'password': hashlib.md5(request.form.get('password').encode()).hexdigest(),
+            'rol': request.form.get('rol'),
+            'calle': request.form.get('calle'),
+            'numero': request.form.get('numero'),
+            'ciudad': request.form.get('ciudad'),
+            'codigo_postal': request.form.get('codigo_postal')
+        }
+        
+        if Usuario.crear(datos):
+            flash(f'Usuario {datos["rol"]} creado exitosamente', 'success')
+            return redirect(url_for('usuarios_lista'))
+        else:
+            flash('Error al crear usuario', 'danger')
+    
+    return render_template('usuarios/crear.html')
+
+@app.route('/usuarios')
+@login_required(roles=['Administrador'])
+def usuarios_lista():
+    """Lista de todos los usuarios"""
+    usuarios = Usuario.obtener_todos()
+    return render_template('usuarios/lista.html', usuarios=usuarios)
+
 @app.route('/proveedores/crear', methods=['GET', 'POST'])
 @login_required(roles=['Administrador'])
 def proveedor_crear():
