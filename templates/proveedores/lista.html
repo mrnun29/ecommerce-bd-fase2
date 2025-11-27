@@ -19,65 +19,84 @@
     </div>
 </div>
 
+<!-- Agrupar proveedores por ID -->
+{% set proveedores_dict = {} %}
+{% for prov in proveedores %}
+    {% if prov.id_proveedor not in proveedores_dict %}
+        {% set _ = proveedores_dict.update({prov.id_proveedor: {'info': prov, 'usuarios': []}}) %}
+    {% endif %}
+    {% if prov.id_usuario %}
+        {% set _ = proveedores_dict[prov.id_proveedor]['usuarios'].append(prov) %}
+    {% endif %}
+{% endfor %}
+
 <div class="row">
     <div class="col-12">
-        {% if proveedores %}
-            <!-- Agrupar proveedores por empresa -->
-            {% set ns = namespace(prev_id=None) %}
-            {% for proveedor in proveedores %}
-                {% if ns.prev_id != proveedor.id_proveedor %}
-                    {% if ns.prev_id is not none %}
-                        </div></div></div>
-                    {% endif %}
-                    <div class="card shadow-sm mb-3">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0">
-                                <i class="bi bi-building"></i> {{ proveedor.empresa }}
-                            </h5>
+        {% if proveedores_dict %}
+            {% for id_prov, data in proveedores_dict.items() %}
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-building"></i> {{ data.info.empresa }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Contacto:</strong> {{ data.info.contacto }}</p>
+                            <p class="mb-2">
+                                <strong>Dirección:</strong> 
+                                {{ data.info.calle }} #{{ data.info.numero }}, 
+                                {{ data.info.ciudad }}, CP {{ data.info.codigo_postal }}
+                            </p>
                         </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p class="mb-2"><strong>Contacto:</strong> {{ proveedor.contacto }}</p>
-                                    <p class="mb-2">
-                                        <strong>Dirección:</strong> 
-                                        {{ proveedor.calle }} #{{ proveedor.numero }}, 
-                                        {{ proveedor.ciudad }}, CP {{ proveedor.codigo_postal }}
-                                    </p>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Usuarios vinculados:</strong></p>
+                            {% if data.usuarios|length > 0 %}
+                                {% for usuario in data.usuarios %}
+                                <div class="d-flex align-items-center justify-content-between ms-3 mb-2 p-2 border rounded">
+                                    <div>
+                                        <i class="bi bi-person-badge text-success"></i> 
+                                        <strong>{{ usuario.nombre_usuario }}</strong>
+                                        <br>
+                                        <small class="text-muted ms-4">{{ usuario.correo }}</small>
+                                    </div>
+                                    <form method="POST" action="{{ url_for('proveedor_desvincular_usuario', id_proveedor=id_prov, id_usuario=usuario.id_usuario) }}" style="display:inline;" onsubmit="return confirm('¿Desvincular a {{ usuario.nombre_usuario }}?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    </form>
                                 </div>
-                                <div class="col-md-6">
-                                    <p class="mb-2"><strong>Usuario vinculado:</strong></p>
-                    {% set ns.prev_id = proveedor.id_proveedor %}
-                {% endif %}
-                
-                {% if proveedor.id_usuario %}
-                    <div class="ms-3 mb-2">
-                        <i class="bi bi-person-badge text-success"></i> 
-                        <strong>{{ proveedor.nombre_usuario }}</strong>
-                        <br>
-                        <small class="text-muted ms-4">{{ proveedor.correo }}</small>
-                    </div>
-                {% else %}
-                    {% if loop.last or loop.nextitem.id_proveedor != proveedor.id_proveedor %}
-                        <div class="ms-3 mb-2">
-                            <i class="bi bi-person-x text-warning"></i> 
-                            <span class="text-muted">Sin usuario vinculado</span>
-                        </div>
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-            
-            {% if proveedores %}
+                                {% endfor %}
+                            {% else %}
+                                <div class="ms-3 mb-2">
+                                    <i class="bi bi-person-x text-warning"></i> 
+                                    <span class="text-muted">Sin usuarios vinculados</span>
                                 </div>
-                            </div>
+                            {% endif %}
+                            
                             <div class="mt-3">
-                                <a href="{{ url_for('proveedores_stock_bajo') }}" class="btn btn-warning btn-sm">
-                                    <i class="bi bi-exclamation-triangle"></i> Ver Stock Bajo
-                                </a>
+                                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#vincularModal{{ id_prov }}">
+                                    <i class="bi bi-person-plus"></i> Vincular Usuario
+                                </button>
                             </div>
                         </div>
                     </div>
-            {% endif %}
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('proveedores_stock_bajo') }}" class="btn btn-warning btn-sm">
+                            <i class="bi bi-exclamation-triangle"></i> Ver Stock Bajo
+                        </a>
+                        <form method="POST" action="{{ url_for('proveedor_eliminar', id=id_prov) }}" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este proveedor y todas sus vinculaciones?');">
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash"></i> Eliminar Proveedor
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         {% else %}
             <div class="alert alert-info">
                 <i class="bi bi-info-circle"></i> 
@@ -101,4 +120,40 @@
         </a>
     </div>
 </div>
+
+<!-- Modales para vincular usuarios -->
+{% if proveedores_dict %}
+    {% for id_prov, data in proveedores_dict.items() %}
+    <div class="modal fade" id="vincularModal{{ id_prov }}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Vincular Usuario a {{ data.info.empresa }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="{{ url_for('proveedor_vincular_usuario', id_proveedor=id_prov) }}">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="id_usuario{{ id_prov }}" class="form-label">Seleccionar Usuario Proveedor</label>
+                            <select class="form-select" id="id_usuario{{ id_prov }}" name="id_usuario" required>
+                                <option value="">-- Seleccionar --</option>
+                                {% for usuario in usuarios_disponibles %}
+                                <option value="{{ usuario.id_usuario }}">{{ usuario.nombre }} ({{ usuario.correo }})</option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Solo se muestran usuarios con rol Proveedor sin vincular</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-link"></i> Vincular
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}
 {% endblock %}

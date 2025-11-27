@@ -168,3 +168,61 @@ class Proveedor:
             ORDER BY p.empresa, u.nombre
         """
         return db.fetch_query(query)
+    
+    @staticmethod
+    def vincular_usuario(id_proveedor, id_usuario):
+        """Vincular un usuario con un proveedor"""
+        try:
+            # Verificar que el usuario sea de rol Proveedor
+            query_check = "SELECT rol FROM USUARIO WHERE id_usuario = %s"
+            usuario = db.fetch_one(query_check, (id_usuario,))
+            
+            if not usuario or usuario['rol'] != 'Proveedor':
+                print("El usuario no es de rol Proveedor")
+                return False
+            
+            # Verificar si ya está vinculado
+            query_exists = """
+                SELECT * FROM PROVEEDOR_USUARIO 
+                WHERE id_proveedor = %s AND id_usuario = %s
+            """
+            if db.fetch_one(query_exists, (id_proveedor, id_usuario)):
+                print("El usuario ya está vinculado a este proveedor")
+                return False
+            
+            # Vincular
+            query = """
+                INSERT INTO PROVEEDOR_USUARIO (id_proveedor, id_usuario)
+                VALUES (%s, %s)
+            """
+            return db.execute_query(query, (id_proveedor, id_usuario)) is not None
+        except Exception as e:
+            print(f"Error vinculando usuario: {e}")
+            return False
+    
+    @staticmethod
+    def desvincular_usuario(id_proveedor, id_usuario):
+        """Desvincular un usuario de un proveedor"""
+        try:
+            query = """
+                DELETE FROM PROVEEDOR_USUARIO 
+                WHERE id_proveedor = %s AND id_usuario = %s
+            """
+            return db.execute_query(query, (id_proveedor, id_usuario)) is not None
+        except Exception as e:
+            print(f"Error desvinculando usuario: {e}")
+            return False
+    
+    @staticmethod
+    def obtener_usuarios_disponibles():
+        """Obtener usuarios con rol Proveedor que no están vinculados a ningún proveedor"""
+        query = """
+            SELECT u.id_usuario, u.nombre, u.correo
+            FROM USUARIO u
+            WHERE u.rol = 'Proveedor'
+            AND u.id_usuario NOT IN (
+                SELECT id_usuario FROM PROVEEDOR_USUARIO
+            )
+            ORDER BY u.nombre
+        """
+        return db.fetch_query(query)

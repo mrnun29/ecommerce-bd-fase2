@@ -69,7 +69,7 @@
         </div>
     </div>
 
-    <div class="col-md-12 mb-3">
+    <div class="col-md-6 mb-3">
         <div class="card shadow-sm h-100">
             <div class="card-body">
                 <h5 class="card-title">
@@ -78,6 +78,20 @@
                 <p class="card-text">Consultar el catálogo completo de productos del sistema.</p>
                 <a href="{{ url_for('productos_lista') }}" class="btn btn-primary">
                     <i class="bi bi-list-ul"></i> Ver Catálogo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-clock-history text-success"></i> Historial de Reabastecimientos
+                </h5>
+                <p class="card-text">Consultar todos los reabastecimientos realizados.</p>
+                <a href="{{ url_for('proveedor_historial') }}" class="btn btn-success">
+                    <i class="bi bi-list-check"></i> Ver Historial
                 </a>
             </div>
         </div>

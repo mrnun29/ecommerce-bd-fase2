@@ -30,6 +30,7 @@
                                 <th>Correo</th>
                                 <th>Rol</th>
                                 <th>Ciudad</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -39,14 +40,32 @@
                                 <td><strong>{{ usuario.nombre }}</strong></td>
                                 <td>{{ usuario.correo }}</td>
                                 <td>
+                                    {% set rol_display = usuario.rol %}
+                                    {% if usuario.rol == 'Empleado' %}
+                                        {% set rol_display = 'Trabajador' %}
+                                    {% elif usuario.rol == 'Cliente' and 'proveedor' in usuario.correo.lower() %}
+                                        {% set rol_display = 'Proveedor' %}
+                                    {% endif %}
                                     <span class="badge 
-                                        {% if usuario.rol == 'Administrador' %}bg-danger
-                                        {% elif usuario.rol == 'Trabajador' %}bg-success
-                                        {% else %}bg-info{% endif %}">
-                                        {{ usuario.rol }}
+                                        {% if rol_display == 'Administrador' %}bg-danger
+                                        {% elif rol_display == 'Trabajador' %}bg-success
+                                        {% elif rol_display == 'Proveedor' %}bg-info
+                                        {% else %}bg-warning{% endif %}">
+                                        {{ rol_display }}
                                     </span>
                                 </td>
                                 <td>{{ usuario.ciudad }}</td>
+                                <td>
+                                    {% if session.user_id != usuario.id_usuario %}
+                                    <form method="POST" action="{{ url_for('usuario_eliminar', id=usuario.id_usuario) }}" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar a {{ usuario.nombre }}?');">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <span class="text-muted"><i class="bi bi-lock"></i> Actual</span>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>

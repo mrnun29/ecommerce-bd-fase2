@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Producto{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-plus-circle"></i> Crear Nuevo Producto</h2>
+        <p class="text-muted">Agregar un producto al catálogo</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('producto_crear') }}">
+                    <h5 class="mb-3"><i class="bi bi-box-seam"></i> Información del Producto</h5>
+                    
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre del Producto *</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" 
+                               placeholder="Ej: Laptop HP 15" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" 
+                                  rows="3" placeholder="Descripción detallada del producto"></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="precio" class="form-label">Precio *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="precio" name="precio" 
+                                       step="0.01" min="0" placeholder="0.00" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="imagen" class="form-label">Imagen (URL o nombre)</label>
+                            <input type="text" class="form-control" id="imagen" name="imagen" 
+                                   placeholder="producto.jpg">
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h5 class="mb-3"><i class="bi bi-boxes"></i> Control de Inventario</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="stock" class="form-label">Stock Inicial *</label>
+                            <input type="number" class="form-control" id="stock" name="stock" 
+                                   value="0" min="0" required>
+                            <small class="text-muted">Cantidad de unidades disponibles</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="nivel_minimo" class="form-label">Nivel Mínimo *</label>
+                            <input type="number" class="form-control" id="nivel_minimo" name="nivel_minimo" 
+                                   value="10" min="0" required>
+                            <small class="text-muted">Alerta cuando stock ≤ este valor</small>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('productos_lista') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Crear Producto
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-lightbulb"></i> Consejos</h5>
+                <ul class="small">
+                    <li>El nombre debe ser descriptivo y único</li>
+                    <li>Agrega una descripción detallada</li>
+                    <li>El nivel mínimo activa alertas de stock bajo</li>
+                    <li>Puedes editar el stock después</li>
+                    <li>La imagen puede ser una URL o nombre de archivo</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm mt-3">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-info-circle"></i> Información</h5>
+                <p class="small mb-0">
+                    Los productos creados estarán disponibles inmediatamente en el catálogo.
+                    Recuerda configurar el nivel mínimo para recibir alertas de stock bajo.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
