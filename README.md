@@ -1,8 +1,8 @@
-# Sistema de Comercio Electrónico con Gestión de Inventarios
+# 🛒 Sistema de Comercio Electrónico con Gestión de Inventarios
 
 **Bases de Datos - Fase 2: Implementación**
 
-## Equipo de Desarrollo
+## 👥 Equipo de Desarrollo
 - Alberto Romero Mañón (00439959)
 - Diego Nuñez Chavez (00516279)
 - Emilio Antonio Tolosa Soto (00520630)
@@ -13,14 +13,20 @@
 
 ## 📋 Descripción del Proyecto
 
-Sistema integral de comercio electrónico desarrollado en Python con Flask que permite:
+Sistema integral de comercio electrónico desarrollado con Flask y MySQL que implementa un modelo de 3 roles de usuario:
 
-- Gestión de usuarios (Administradores, Empleados y Clientes)
-- Control de inventarios con alertas de stock bajo
-- Procesamiento de pedidos y pagos
-- Gestión de proveedores y abastecimiento
-- Sistema de envíos y devoluciones
-- Reportes de ventas y análisis
+- **Administrador**: Gestión completa del sistema
+- **Trabajador**: Procesamiento de ventas y gestión de inventario
+- **Proveedor**: Consulta de inventario y registro de abastecimientos
+
+### Funcionalidades Principales
+- ✅ Sistema de autenticación con 3 roles diferenciados
+- ✅ Control de inventarios con alertas de stock bajo
+- ✅ Procesamiento de ventas directas (trabajadores)
+- ✅ Gestión de proveedores con vinculación de usuarios
+- ✅ Registro de abastecimientos por proveedores
+- ✅ Sistema de pedidos y múltiples métodos de pago
+- ✅ Interfaz web completa y responsiva
 
 ## 🏗️ Arquitectura del Sistema
 
@@ -65,70 +71,88 @@ El sistema utiliza MySQL con las siguientes entidades principales:
 ## 🚀 Instalación y Configuración
 
 ### Prerrequisitos
-- Python 3.8 o superior
-- MySQL 8.0 o superior
-- pip (gestor de paquetes Python)
+- Docker Desktop instalado ([Descargar aquí](https://www.docker.com/products/docker-desktop))
+- Git (para clonar el repositorio)
 
-### Pasos de Instalación
+### 👉 Instalación Rápida con Docker (RECOMENDADO)
 
-1. **Clonar o descargar el proyecto**
+**Paso 1: Clonar el repositorio**
 ```bash
-cd ecommerce_db
+git clone https://github.com/mrnun29/ecommerce-bd-fase2.git
+cd ecommerce-bd-fase2
 ```
 
-2. **Crear entorno virtual (recomendado)**
+**Paso 2: Iniciar los contenedores**
 ```bash
-python3 -m venv venv
-source venv/bin/activate  # En Mac/Linux
-# venv\Scripts\activate  # En Windows
+docker-compose up -d
 ```
 
-3. **Instalar dependencias**
+Esto creará:
+- Contenedor MySQL en el puerto `3306`
+- Contenedor Flask en el puerto `5001`
+- Aplicará automáticamente el schema y datos de prueba
+
+**Paso 3: Acceder a la aplicación**
+
+Abre tu navegador en: **http://localhost:5001**
+
+🎉 ¡Listo! El sistema está funcionando.
+
+### 🔄 Comandos Útiles
+
+**Reiniciar el servidor (después de cambios en el código):**
 ```bash
-pip install -r requirements.txt
+./reiniciar.sh
 ```
 
-4. **Configurar base de datos**
+**Ver logs del servidor:**
 ```bash
-# Iniciar sesión en MySQL
-mysql -u root -p
-
-# Ejecutar el script de creación
-source schema.sql
+docker logs ecommerce_web
 ```
 
-5. **Configurar variables de entorno**
+**Detener los contenedores:**
 ```bash
-cp .env.example .env
-# Editar .env con tus credenciales de MySQL
+docker-compose down
 ```
 
-6. **Ejecutar la aplicación**
+**Reiniciar todo desde cero:**
 ```bash
-python app.py
+docker-compose down -v  # Elimina volúmenes
+docker-compose up -d
 ```
 
-La aplicación estará disponible en: `http://localhost:5000`
+## 👥 Usuarios de Prueba
 
-## 👥 Roles y Permisos
+El sistema incluye 3 usuarios predefinidos, uno por cada rol:
 
-### Administrador
-- Acceso completo al sistema
-- Gestión de usuarios, productos, proveedores
-- Reportes y estadísticas
-- Eliminación de registros
+### 🔑 Administrador
+- **Correo:** `admin@ecommerce.com`
+- **Contraseña:** `admin123`
+- **Permisos:**
+  - ✅ Gestión completa de usuarios
+  - ✅ CRUD de productos
+  - ✅ Gestión de proveedores
+  - ✅ Vincular/desvincular usuarios a empresas
+  - ✅ Ver todos los pedidos
+  - ✅ Eliminar registros
 
-### Empleado
-- Gestión de inventarios
-- Procesamiento de pedidos
-- Gestión de envíos
-- Registro de abastecimiento
+### 🛠️ Trabajador
+- **Correo:** `trabajador@ecommerce.com`
+- **Contraseña:** `123456`
+- **Permisos:**
+  - ✅ Procesar ventas directas
+  - ✅ Gestionar inventario
+  - ✅ Ver sus propios pedidos
+  - ✅ Consultar productos
 
-### Cliente
-- Visualización de productos
-- Realización de compras
-- Seguimiento de pedidos
-- Gestión de devoluciones
+### 🚚 Proveedor
+- **Correo:** `proveedor@ecommerce.com`
+- **Contraseña:** `123456`
+- **Permisos:**
+  - ✅ Consultar inventario (solo lectura)
+  - ✅ Ver productos con stock bajo
+  - ✅ Registrar abastecimientos
+  - ✅ Ver historial de abastecimientos
 
 ## 🔐 Seguridad
 
@@ -207,32 +231,62 @@ La aplicación estará disponible en: `http://localhost:5000`
 - **Seguridad**: Werkzeug (hash de contraseñas)
 - **Frontend**: HTML5, CSS3, JavaScript (a implementar)
 
-## 📖 Uso del Sistema
+## 📚 Uso del Sistema
 
-### Primer Uso
+### 1️⃣ Iniciar Sesión
 
-1. Acceder a `http://localhost:5000/registro`
-2. Crear una cuenta de usuario
-3. Iniciar sesión con las credenciales
-4. Explorar el dashboard según tu rol
+1. Acceder a `http://localhost:5001`
+2. Usar cualquiera de las credenciales de prueba
+3. El sistema te redirigirá al dashboard correspondiente a tu rol
 
-### Crear Productos (Admin/Empleado)
-1. Ir a `/productos/crear`
-2. Llenar el formulario con datos del producto
-3. El sistema validará stock mínimo automáticamente
+### 2️⃣ Como Administrador
 
-### Realizar Pedido (Cliente)
-1. Explorar catálogo de productos
-2. Agregar productos al carrito
-3. Proceder al checkout
-4. Seleccionar método de pago
-5. El stock se actualiza automáticamente
+**Gestionar Productos:**
+- Dashboard → Productos → Crear Producto
+- Llenar formulario con nombre, precio, stock, etc.
+- El producto aparecerá en el catálogo
 
-### Gestionar Proveedores (Admin/Empleado)
-1. Ir a `/proveedores`
-2. Registrar nuevo proveedor con dirección
-3. Asociar productos mediante abastecimiento
-4. El sistema actualiza stock al registrar abastecimientos
+**Gestionar Usuarios:**
+- Dashboard → Proveedores y Trabajadores
+- Ver lista de trabajadores y proveedores
+- Editar o eliminar usuarios (botón de lápiz/basura)
+- Crear nuevos trabajadores o proveedores
+
+**Vincular Usuarios a Proveedores:**
+- Dashboard → Proveedores (lista)
+- Clic en "Vincular Usuario" en cada empresa
+- Seleccionar usuario proveedor sin vincular
+- El usuario ahora puede registrar abastecimientos
+
+### 3️⃣ Como Trabajador
+
+**Procesar Ventas:**
+- Dashboard → Procesar Ventas
+- Seleccionar productos del dropdown
+- Ingresar cantidades
+- Elegir método de pago (Efectivo/Tarjeta/Transferencia)
+- Clic en "Procesar Venta"
+- El inventario se actualiza automáticamente
+
+**Ver Pedidos:**
+- Dashboard → Mis Pedidos
+- Ver historial de ventas procesadas
+
+### 4️⃣ Como Proveedor
+
+**Ver Stock Bajo:**
+- Dashboard → Productos con Stock Bajo
+- Identificar productos que necesitan reabastecimiento
+
+**Registrar Abastecimiento:**
+- Seleccionar producto con stock bajo
+- Ingresar cantidad a reabastecer
+- Clic en "Reabastecer"
+- El stock se actualiza automáticamente
+
+**Ver Historial:**
+- Dashboard → Mi Historial
+- Consultar todos los abastecimientos realizados
 
 ## 🔄 Flujo del Proceso
 
