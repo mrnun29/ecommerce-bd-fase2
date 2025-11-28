@@ -214,7 +214,7 @@ def seed_database():
     print("  Password: proveedor123")
     print("\n" + "="*50)
     
-    db.close()
+    db.disconnect()
 
 if __name__ == '__main__':
     seed_database()

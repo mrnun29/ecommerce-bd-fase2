@@ -5,13 +5,13 @@ Fase 2: Implementación
 """
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from functools import wraps
+from werkzeug.security import check_password_hash
 from config.database import db
 from models.usuario import Usuario
 from models.producto import Producto
 from models.pedido import Pedido, Pago
 from models.proveedor import Proveedor
 import os
-import hashlib
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'clave_secreta_desarrollo_2025')
@@ -65,10 +65,7 @@ def login():
         
         usuario = Usuario.buscar_por_correo(correo)
         
-        # Hash MD5 de la contraseña
-        password_hash = hashlib.md5(password.encode()).hexdigest()
-        
-        if usuario and usuario['password'] == password_hash:
+        if usuario and check_password_hash(usuario['password'], password):
             session['user_id'] = usuario['id_usuario']
             session['nombre'] = usuario['nombre']
             
