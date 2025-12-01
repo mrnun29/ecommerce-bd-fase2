@@ -5,7 +5,7 @@ Fase 2: Implementación
 """
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from functools import wraps
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from config.database import db
 from models.usuario import Usuario
 from models.producto import Producto
@@ -66,6 +66,11 @@ def login():
         usuario = Usuario.buscar_por_correo(correo)
         
         if usuario and check_password_hash(usuario['password'], password):
+            # Verificar si el usuario está activo
+            if not usuario.get('activo', True):
+                flash('Tu cuenta ha sido inhabilitada. Contacta al administrador.', 'danger')
+                return render_template('login.html')
+            
             session['user_id'] = usuario['id_usuario']
             session['nombre'] = usuario['nombre']
             
@@ -254,7 +259,7 @@ def usuario_crear():
         datos = {
             'nombre': request.form.get('nombre'),
             'correo': request.form.get('correo'),
-            'password': hashlib.md5(request.form.get('password').encode()).hexdigest(),
+            'password': generate_password_hash(request.form.get('password')),
             'rol': request.form.get('rol'),
             'calle': request.form.get('calle'),
             'numero': request.form.get('numero'),
@@ -262,11 +267,15 @@ def usuario_crear():
             'codigo_postal': request.form.get('codigo_postal')
         }
         
-        if Usuario.crear(datos):
-            flash(f'Usuario {datos["rol"]} creado exitosamente', 'success')
+        print(f"[DEBUG] Intentando crear usuario: {datos['nombre']} - {datos['correo']} - Rol: {datos['rol']}")
+        resultado = Usuario.crear(datos)
+        print(f"[DEBUG] Resultado de Usuario.crear(): {resultado}")
+        
+        if resultado:
+            flash(f'✓ Usuario "{datos["nombre"]}" creado exitosamente como {datos["rol"]}', 'success')
             return redirect(url_for('usuarios_lista'))
         else:
-            flash('Error al crear usuario', 'danger')
+            flash(f'✗ Error al crear el usuario. Verifica que el correo {datos["correo"]} no esté registrado.', 'danger')
     
     return render_template('usuarios/crear.html')
 
@@ -329,6 +338,49 @@ def usuario_eliminar(id):
         return redirect(url_for('proveedores_usuarios'))
     return redirect(url_for('usuarios_lista'))
 
+@app.route('/usuarios/<int:id>/inhabilitar', methods=['POST'])
+@login_required(roles=['Administrador'])
+def usuario_inhabilitar(id):
+    """Inhabilitar usuario (sin eliminarlo)"""
+    # No permitir inhabilitar al admin actual
+    if id == session.get('user_id'):
+        flash('No puedes inhabilitar tu propia cuenta', 'danger')
+        return redirect(url_for('usuarios_lista'))
+    
+    usuario = Usuario.obtener_por_id(id)
+    if not usuario:
+        flash('Usuario no encontrado', 'warning')
+        return redirect(url_for('usuarios_lista'))
+    
+    if Usuario.inhabilitar(id):
+        flash(f'Usuario {usuario["nombre"]} inhabilitado exitosamente', 'success')
+    else:
+        flash('Error al inhabilitar usuario', 'danger')
+    
+    referer = request.referrer
+    if referer and 'proveedores/usuarios' in referer:
+        return redirect(url_for('proveedores_usuarios'))
+    return redirect(url_for('usuarios_lista'))
+
+@app.route('/usuarios/<int:id>/habilitar', methods=['POST'])
+@login_required(roles=['Administrador'])
+def usuario_habilitar(id):
+    """Habilitar usuario previamente inhabilitado"""
+    usuario = Usuario.obtener_por_id(id)
+    if not usuario:
+        flash('Usuario no encontrado', 'warning')
+        return redirect(url_for('usuarios_lista'))
+    
+    if Usuario.habilitar(id):
+        flash(f'Usuario {usuario["nombre"]} habilitado exitosamente', 'success')
+    else:
+        flash('Error al habilitar usuario', 'danger')
+    
+    referer = request.referrer
+    if referer and 'proveedores/usuarios' in referer:
+        return redirect(url_for('proveedores_usuarios'))
+    return redirect(url_for('usuarios_lista'))
+
 @app.route('/proveedores/crear', methods=['GET', 'POST'])
 @login_required(roles=['Administrador'])
 def proveedor_crear():
@@ -337,17 +389,19 @@ def proveedor_crear():
         datos = {
             'contacto': request.form.get('contacto'),
             'empresa': request.form.get('empresa'),
+            'telefono': request.form.get('telefono'),
             'calle': request.form.get('calle'),
             'numero': request.form.get('numero'),
             'ciudad': request.form.get('ciudad'),
             'codigo_postal': request.form.get('codigo_postal')
         }
         
-        if Proveedor.crear(datos):
-            flash('Proveedor creado exitosamente', 'success')
+        resultado = Proveedor.crear(datos)
+        if resultado:
+            flash(f'✓ Proveedor "{datos["empresa"]}" registrado exitosamente. Contacto: {datos["contacto"]}', 'success')
             return redirect(url_for('proveedores_lista'))
         else:
-            flash('Error al crear proveedor', 'danger')
+            flash(f'✗ Error al crear el proveedor "{datos["empresa"]}". Verifica los datos e intenta nuevamente.', 'danger')
     
     return render_template('proveedores/crear.html')
 
@@ -539,6 +593,63 @@ def procesar_venta():
         flash(f'Error: {str(e)}', 'danger')
     
     return redirect(url_for('ventas'))
+
+# ============= ANALÍTICAS (ADMINISTRADOR) =============
+
+@app.route('/admin/analiticas')
+@login_required(roles=['Administrador'])
+def admin_analiticas():
+    """Panel de analíticas de ventas para administrador"""
+    from datetime import datetime, timedelta
+    
+    # Obtener estadísticas generales
+    hoy = datetime.now()
+    hace_30_dias = hoy - timedelta(days=30)
+    
+    # Total de ventas del mes
+    ventas_mes = Pedido.obtener_total_ventas_periodo(hace_30_dias, hoy)
+    
+    # Todos los pedidos recientes
+    pedidos_recientes = Pedido.obtener_todos()[:10]  # Últimos 10
+    
+    # Productos más vendidos
+    query_productos_vendidos = """
+        SELECT p.id_producto, p.nombre, p.precio, p.stock,
+               SUM(c.cantidad) as total_vendido,
+               SUM(c.cantidad * c.precio_unitario) as ingresos_totales
+        FROM PRODUCTO p
+        JOIN CARRITO c ON p.id_producto = c.PRODUCTO_id_producto
+        JOIN PEDIDO ped ON c.PEDIDO_id_pedido = ped.id_pedido
+        WHERE ped.estado != 'Cancelado'
+        GROUP BY p.id_producto
+        ORDER BY total_vendido DESC
+        LIMIT 10
+    """
+    productos_mas_vendidos = db.fetch_query(query_productos_vendidos)
+    
+    # Ventas por trabajador
+    query_ventas_trabajador = """
+        SELECT u.id_usuario, u.nombre,
+               COUNT(p.id_pedido) as num_ventas,
+               SUM(p.total) as total_ventas
+        FROM USUARIO u
+        LEFT JOIN PEDIDO p ON u.id_usuario = p.procesado_por
+        WHERE u.rol IN ('Trabajador', 'Empleado')
+        AND (p.estado != 'Cancelado' OR p.estado IS NULL)
+        GROUP BY u.id_usuario
+        ORDER BY total_ventas DESC
+    """
+    ventas_por_trabajador = db.fetch_query(query_ventas_trabajador)
+    
+    # Productos con stock bajo
+    productos_stock_bajo = Producto.obtener_stock_bajo()
+    
+    return render_template('admin/analiticas.html',
+                         ventas_mes=ventas_mes,
+                         pedidos_recientes=pedidos_recientes,
+                         productos_mas_vendidos=productos_mas_vendidos,
+                         ventas_por_trabajador=ventas_por_trabajador,
+                         productos_stock_bajo=productos_stock_bajo)
 
 # ============= INVENTARIO (ADMINISTRADOR) =============
 

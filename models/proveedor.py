@@ -11,6 +11,11 @@ class Proveedor:
     def crear(datos):
         """Crear un nuevo proveedor con su dirección"""
         try:
+            # Validar que teléfono esté presente
+            if 'telefono' not in datos or not datos['telefono']:
+                print("Error: El teléfono es un campo requerido para crear un proveedor")
+                return False
+            
             # Crear dirección
             query_direccion = """
                 INSERT INTO DIRECCION (calle, numero, ciudad, codigo_postal)
@@ -26,14 +31,15 @@ class Proveedor:
             if not id_direccion:
                 return False
             
-            # Crear proveedor
+            # Crear proveedor con teléfono
             query_proveedor = """
-                INSERT INTO PROVEEDOR (contacto, empresa, id_direccion)
-                VALUES (%s, %s, %s)
+                INSERT INTO PROVEEDOR (contacto, empresa, telefono, id_direccion)
+                VALUES (%s, %s, %s, %s)
             """
             return db.execute_query(query_proveedor, (
                 datos['contacto'],
                 datos['empresa'],
+                datos['telefono'],
                 id_direccion
             ))
         except Exception as e:

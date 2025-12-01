@@ -16,6 +16,17 @@ class Pedido:
         procesado_por: id del trabajador que procesa el pedido (opcional)
         """
         try:
+            # Validar stock disponible antes de crear el pedido
+            from models.producto import Producto
+            for producto in productos:
+                producto_actual = Producto.obtener_por_id(producto['id_producto'])
+                if not producto_actual:
+                    print(f"Error: Producto {producto['id_producto']} no encontrado")
+                    return False
+                if producto_actual['stock'] < producto['cantidad']:
+                    print(f"Error: Stock insuficiente para {producto_actual['nombre']}. Disponible: {producto_actual['stock']}, Solicitado: {producto['cantidad']}")
+                    return False
+            
             # Calcular total
             total = sum(p['cantidad'] * p['precio_unitario'] for p in productos)
             
@@ -130,12 +141,57 @@ class Pedido:
     @staticmethod
     def actualizar_estado(id_pedido, nuevo_estado):
         """Actualizar estado del pedido"""
+        # Si se está cancelando, devolver stock
+        if nuevo_estado == 'Cancelado':
+            return Pedido.cancelar(id_pedido)
+        
         query = """
             UPDATE PEDIDO
             SET estado = %s
             WHERE id_pedido = %s
         """
         return db.execute_query(query, (nuevo_estado, id_pedido)) is not None
+    
+    @staticmethod
+    def cancelar(id_pedido):
+        """Cancelar pedido y devolver stock de los productos"""
+        try:
+            # Verificar que el pedido existe y no está ya cancelado
+            pedido = Pedido.obtener_por_id(id_pedido)
+            if not pedido:
+                print(f"Error: Pedido {id_pedido} no encontrado")
+                return False
+            
+            if pedido['estado'] == 'Cancelado':
+                print(f"Error: Pedido {id_pedido} ya está cancelado")
+                return False
+            
+            # Obtener productos del pedido
+            productos = Pedido.obtener_productos_pedido(id_pedido)
+            
+            # Devolver stock de cada producto
+            for item in productos:
+                query_stock = """
+                    UPDATE PRODUCTO
+                    SET stock = stock + %s
+                    WHERE id_producto = %s
+                """
+                db.execute_query(query_stock, (
+                    item['cantidad'],
+                    item['id_producto']
+                ))
+                print(f"Stock devuelto: {item['cantidad']} unidades de {item['nombre']}")
+            
+            # Actualizar estado del pedido a Cancelado
+            query = """
+                UPDATE PEDIDO
+                SET estado = 'Cancelado'
+                WHERE id_pedido = %s
+            """
+            return db.execute_query(query, (id_pedido,)) is not None
+        except Exception as e:
+            print(f"Error cancelando pedido: {e}")
+            return False
     
     @staticmethod
     def eliminar(id_pedido):

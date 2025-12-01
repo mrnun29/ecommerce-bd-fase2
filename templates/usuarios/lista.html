@@ -29,6 +29,7 @@
                                 <th>Nombre</th>
                                 <th>Correo</th>
                                 <th>Rol</th>
+                                <th>Estado</th>
                                 <th>Ciudad</th>
                                 <th>Acciones</th>
                             </tr>
@@ -54,12 +55,32 @@
                                         {{ rol_display }}
                                     </span>
                                 </td>
+                                <td>
+                                    {% if usuario.activo %}
+                                    <span class="badge bg-success"><i class="bi bi-check-circle"></i> Activo</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary"><i class="bi bi-x-circle"></i> Inactivo</span>
+                                    {% endif %}
+                                </td>
                                 <td>{{ usuario.ciudad }}</td>
                                 <td>
                                     {% if session.user_id != usuario.id_usuario %}
-                                    <form method="POST" action="{{ url_for('usuario_eliminar', id=usuario.id_usuario) }}" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar a {{ usuario.nombre }}?');">
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="bi bi-trash"></i> Eliminar
+                                    {% if usuario.activo %}
+                                    <form method="POST" action="{{ url_for('usuario_inhabilitar', id=usuario.id_usuario) }}" style="display:inline;" onsubmit="return confirm('¿Inhabilitar a {{ usuario.nombre }}?');">
+                                        <button type="submit" class="btn btn-sm btn-warning" title="Inhabilitar usuario">
+                                            <i class="bi bi-slash-circle"></i>
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <form method="POST" action="{{ url_for('usuario_habilitar', id=usuario.id_usuario) }}" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-success" title="Habilitar usuario">
+                                            <i class="bi bi-check-circle"></i>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                    <form method="POST" action="{{ url_for('usuario_eliminar', id=usuario.id_usuario) }}" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar a {{ usuario.nombre }}? Esta acción es permanente.');">
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Eliminar permanentemente">
+                                            <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
                                     {% else %}

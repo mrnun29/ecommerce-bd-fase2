@@ -10,6 +10,7 @@ class Usuario:
     def crear(datos):
         """Crear un nuevo usuario con su dirección"""
         try:
+            print(f"[DEBUG Usuario.crear] Creando dirección para: {datos['nombre']}")
             # Primero crear la dirección
             query_direccion = """
                 INSERT INTO DIRECCION (calle, numero, ciudad, codigo_postal)
@@ -21,11 +22,14 @@ class Usuario:
                 datos['ciudad'],
                 datos['codigo_postal']
             ))
+            print(f"[DEBUG Usuario.crear] ID Dirección creada: {id_direccion}")
             
             if not id_direccion:
+                print("[ERROR Usuario.crear] No se pudo crear la dirección")
                 return False
             
             # Luego crear el usuario
+            print(f"[DEBUG Usuario.crear] Creando usuario con rol: {datos.get('rol', 'Cliente')}")
             query_usuario = """
                 INSERT INTO USUARIO (nombre, correo, password, rol, id_direccion)
                 VALUES (%s, %s, %s, %s, %s)
@@ -37,10 +41,13 @@ class Usuario:
                 datos.get('rol', 'Cliente'),
                 id_direccion
             ))
+            print(f"[DEBUG Usuario.crear] ID Usuario creado: {id_usuario}")
             
             return id_usuario
         except Exception as e:
-            print(f"Error creando usuario: {e}")
+            print(f"[ERROR Usuario.crear] Error creando usuario: {e}")
+            import traceback
+            traceback.print_exc()
             return False
     
     @staticmethod
@@ -148,3 +155,31 @@ class Usuario:
             ORDER BY u.nombre
         """
         return db.fetch_query(query, (rol,))
+    
+    @staticmethod
+    def inhabilitar(id_usuario):
+        """Inhabilitar un usuario (sin eliminarlo)"""
+        try:
+            query = """
+                UPDATE USUARIO
+                SET activo = FALSE
+                WHERE id_usuario = %s
+            """
+            return db.execute_query(query, (id_usuario,)) is not None
+        except Exception as e:
+            print(f"Error inhabilitando usuario: {e}")
+            return False
+    
+    @staticmethod
+    def habilitar(id_usuario):
+        """Habilitar un usuario previamente inhabilitado"""
+        try:
+            query = """
+                UPDATE USUARIO
+                SET activo = TRUE
+                WHERE id_usuario = %s
+            """
+            return db.execute_query(query, (id_usuario,)) is not None
+        except Exception as e:
+            print(f"Error habilitando usuario: {e}")
+            return False

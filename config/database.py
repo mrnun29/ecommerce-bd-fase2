@@ -45,9 +45,15 @@ class Database:
             else:
                 cursor.execute(query)
             self.connection.commit()
-            return cursor.lastrowid
+            last_id = cursor.lastrowid
+            print(f"[DEBUG DB] Query ejecutado exitosamente. LastRowID: {last_id}")
+            return last_id
         except Error as e:
-            print(f"Error ejecutando query: {e}")
+            print(f"[ERROR DB] Error ejecutando query: {e}")
+            print(f"[ERROR DB] Query: {query}")
+            print(f"[ERROR DB] Params: {params}")
+            import traceback
+            traceback.print_exc()
             self.connection.rollback()
             return None
     
