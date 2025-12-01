@@ -59,7 +59,10 @@
         /* Modo Oscuro */
         body.dark-mode {
             background-color: #1a1d20;
-            color: #f8f9fa;
+            color: #ffffff;
+        }
+        body.dark-mode * {
+            color: #ffffff;
         }
         body.dark-mode .card {
             background-color: #2d3238;
@@ -158,10 +161,21 @@
         body.dark-mode h5,
         body.dark-mode h6 {
             color: #ffffff !important;
+            font-weight: 500 !important;
         }
         body.dark-mode p,
-        body.dark-mode .card-body p {
-            color: #f8f9fa !important;
+        body.dark-mode .card-body p,
+        body.dark-mode span,
+        body.dark-mode div {
+            color: #ffffff !important;
+        }
+        body.dark-mode .lead,
+        body.dark-mode .display-4,
+        body.dark-mode .display-1,
+        body.dark-mode .display-2,
+        body.dark-mode .display-3 {
+            color: #ffffff !important;
+            font-weight: 400 !important;
         }
         /* IMPORTANTE: bg-white siempre debe tener texto oscuro */
         body.dark-mode .bg-white,
