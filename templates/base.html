@@ -61,8 +61,8 @@
             background-color: #1a1d20;
             color: #ffffff;
         }
-        body.dark-mode * {
-            color: #ffffff;
+        body.dark-mode *:not(.btn-warning):not(.btn-info):not(.btn-light):not(.bg-white *) {
+            color: #ffffff !important;
         }
         body.dark-mode .card {
             background-color: #2d3238;
