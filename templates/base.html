@@ -56,12 +56,23 @@
             color: #212529 !important;
         }
         
-        /* Modo Oscuro */
+        /* Modo Oscuro - Configuración Universal */
         body.dark-mode {
-            background-color: #1a1d20;
-            color: #ffffff;
+            background-color: #1a1d20 !important;
+            color: #ffffff !important;
         }
-        body.dark-mode *:not(.btn-warning):not(.btn-info):not(.btn-light):not(.bg-white *) {
+        body.dark-mode *,
+        body.dark-mode h1,
+        body.dark-mode h2,
+        body.dark-mode h3,
+        body.dark-mode h4,
+        body.dark-mode h5,
+        body.dark-mode h6,
+        body.dark-mode p,
+        body.dark-mode span,
+        body.dark-mode div,
+        body.dark-mode a,
+        body.dark-mode label {
             color: #ffffff !important;
         }
         body.dark-mode .card {
