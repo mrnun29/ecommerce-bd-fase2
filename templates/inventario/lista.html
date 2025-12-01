@@ -137,10 +137,12 @@
                         <td><strong>${{ "%.2f"|format(producto.stock * producto.precio) }}</strong></td>
                         <td>
                             <div class="btn-group" role="group">
+                                {% if session.rol != 'Proveedor' %}
                                 <a href="{{ url_for('inventario_editar', id_producto=producto.id_producto) }}" 
                                    class="btn btn-sm btn-primary" title="Editar inventario">
                                     <i class="bi bi-pencil"></i>
                                 </a>
+                                {% endif %}
                                 <a href="{{ url_for('producto_detalle', id=producto.id_producto) }}" 
                                    class="btn btn-sm btn-info" title="Ver detalles">
                                     <i class="bi bi-eye"></i>
