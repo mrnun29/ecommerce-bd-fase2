@@ -11,11 +11,6 @@ class Proveedor:
     def crear(datos):
         """Crear un nuevo proveedor con su dirección"""
         try:
-            # Validar que teléfono esté presente
-            if 'telefono' not in datos or not datos['telefono']:
-                print("Error: El teléfono es un campo requerido para crear un proveedor")
-                return False
-            
             # Crear dirección
             query_direccion = """
                 INSERT INTO DIRECCION (calle, numero, ciudad, codigo_postal)
@@ -39,7 +34,7 @@ class Proveedor:
             return db.execute_query(query_proveedor, (
                 datos['contacto'],
                 datos['empresa'],
-                datos['telefono'],
+                datos.get('telefono', ''),
                 id_direccion
             ))
         except Exception as e:
@@ -50,7 +45,8 @@ class Proveedor:
     def obtener_por_id(id_proveedor):
         """Obtener proveedor por ID"""
         query = """
-            SELECT p.*, d.calle, d.numero, d.ciudad, d.codigo_postal
+            SELECT p.id_proveedor, p.contacto, p.empresa, p.telefono, p.id_direccion,
+                   d.calle, d.numero, d.ciudad, d.codigo_postal
             FROM PROVEEDOR p
             JOIN DIRECCION d ON p.id_direccion = d.id_direccion
             WHERE p.id_proveedor = %s
@@ -61,7 +57,8 @@ class Proveedor:
     def obtener_todos():
         """Obtener todos los proveedores"""
         query = """
-            SELECT p.*, d.calle, d.numero, d.ciudad, d.codigo_postal
+            SELECT p.id_proveedor, p.contacto, p.empresa, p.telefono, p.id_direccion,
+                   d.calle, d.numero, d.ciudad, d.codigo_postal
             FROM PROVEEDOR p
             JOIN DIRECCION d ON p.id_direccion = d.id_direccion
             ORDER BY p.empresa
@@ -106,9 +103,18 @@ class Proveedor:
     
     @staticmethod
     def eliminar(id_proveedor):
-        """Eliminar proveedor"""
-        query = "DELETE FROM PROVEEDOR WHERE id_proveedor = %s"
-        return db.execute_query(query, (id_proveedor,)) is not None
+        """Eliminar proveedor y sus abastecimientos"""
+        try:
+            # Primero eliminar abastecimientos
+            query_abastecimientos = "DELETE FROM AVASTECE WHERE PROVEEDOR_id_proveedor = %s"
+            db.execute_query(query_abastecimientos, (id_proveedor,))
+            
+            # Luego eliminar el proveedor (las vinculaciones en PROVEEDOR_USUARIO se eliminan por CASCADE)
+            query = "DELETE FROM PROVEEDOR WHERE id_proveedor = %s"
+            return db.execute_query(query, (id_proveedor,)) is not None
+        except Exception as e:
+            print(f"Error eliminando proveedor: {e}")
+            return False
     
     @staticmethod
     def registrar_abastecimiento(id_proveedor, id_producto, cantidad):
@@ -164,7 +170,7 @@ class Proveedor:
     def obtener_proveedores_con_usuarios():
         """Obtener todos los proveedores con sus usuarios vinculados"""
         query = """
-            SELECT p.id_proveedor, p.contacto, p.empresa,
+            SELECT p.id_proveedor, p.contacto, p.empresa, p.telefono,
                    d.calle, d.numero, d.ciudad, d.codigo_postal,
                    u.id_usuario, u.nombre as nombre_usuario, u.correo
             FROM PROVEEDOR p

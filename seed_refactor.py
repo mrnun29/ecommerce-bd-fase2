@@ -51,6 +51,7 @@ def seed_database():
     proveedor_empresa_data = {
         'contacto': 'Carlos López',
         'empresa': 'Distribuidora Tech SA',
+        'telefono': '4421234567',
         'calle': 'Zona Industrial',
         'numero': 500,
         'ciudad': 'Querétaro',
@@ -87,6 +88,7 @@ def seed_database():
     proveedor2 = {
         'contacto': 'Ana García',
         'empresa': 'Importaciones Global',
+        'telefono': '4427654321',
         'calle': 'Parque Industrial',
         'numero': 300,
         'ciudad': 'Querétaro',
