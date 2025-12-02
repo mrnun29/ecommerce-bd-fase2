@@ -3,7 +3,7 @@ Sistema de Comercio Electrónico con Gestión de Inventarios
 Aplicación Principal - Flask
 Fase 2: Implementación
 """
-from flask import Flask, render_template, request, redirect, url_for, session, flash, Response
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from functools import wraps
 from werkzeug.security import check_password_hash, generate_password_hash
 from config.database import db
@@ -11,20 +11,7 @@ from models.usuario import Usuario
 from models.producto import Producto
 from models.pedido import Pedido, Pago
 from models.proveedor import Proveedor
-from decimal import Decimal
-import json
 import os
-
-# Helper function para convertir Decimal a JSON
-def jsonify_with_decimal(data):
-    """Convert data to JSON, handling Decimal types"""
-    def decimal_default(obj):
-        if isinstance(obj, Decimal):
-            return float(obj)
-        raise TypeError
-    
-    json_str = json.dumps(data, default=decimal_default)
-    return Response(json_str, mimetype='application/json')
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'clave_secreta_desarrollo_2025')
@@ -41,7 +28,7 @@ def obtener_pago_pedido_filter(id_pedido):
 # Conectar a la base de datos al iniciar
 @app.before_request
 def before_request():
-    if not db.connection:
+    if not db.connection or not db.connection.is_connected():
         db.connect()
 
 # Decorador para proteger rutas según rol
@@ -733,7 +720,7 @@ def pedidos_estados():
     """
     resultados = db.fetch_query(query)
     estados = {r['estado']: r['total'] for r in resultados}
-    return jsonify_with_decimal(estados)
+    return estados
 
 @app.route('/api/clientes/top10')
 @login_required(roles=['Administrador'])
@@ -750,26 +737,7 @@ def clientes_top10():
         LIMIT 10
     """
     resultados = db.fetch_query(query)
-    return jsonify_with_decimal(resultados)
-
-@app.route('/api/productos/top10-vendidos')
-@login_required(roles=['Administrador'])
-def productos_top10_vendidos():
-    """Obtener top 10 productos más vendidos"""
-    query = """
-        SELECT p.id_producto, p.nombre, p.precio, 
-               SUM(c.cantidad) as total_vendido,
-               SUM(c.cantidad * c.precio_unitario) as ingresos_totales
-        FROM PRODUCTO p
-        JOIN CARRITO c ON p.id_producto = c.PRODUCTO_id_producto
-        JOIN PEDIDO ped ON c.PEDIDO_id_pedido = ped.id_pedido
-        WHERE ped.estado IN ('Entregado', 'Procesando', 'Enviado')
-        GROUP BY p.id_producto
-        ORDER BY total_vendido DESC
-        LIMIT 10
-    """
-    resultados = db.fetch_query(query)
-    return jsonify_with_decimal(resultados)
+    return resultados
 
 # ============= MANEJO DE ERRORES =============
 
