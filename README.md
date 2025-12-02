@@ -163,7 +163,7 @@ El sistema incluye 3 usuarios predefinidos, uno por cada rol:
 
 ### Trabajador
 - **Correo:** `trabajador@ecommerce.com`
-- **Contraseña:** `123456`
+- **Contraseña:** `trabajador123`
 - **Permisos:**
   - Procesar ventas directas
   - Gestionar inventario
@@ -172,7 +172,7 @@ El sistema incluye 3 usuarios predefinidos, uno por cada rol:
 
 ### Proveedor
 - **Correo:** `proveedor@ecommerce.com`
-- **Contraseña:** `123456`
+- **Contraseña:** `proveedor123`
 - **Permisos:**
   - Consultar inventario (solo lectura)
   - Ver productos con stock bajo
