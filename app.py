@@ -705,6 +705,20 @@ def productos_stock_bajo():
     productos = Producto.obtener_stock_bajo()
     return {'productos': productos}
 
+@app.route('/api/pedidos/estados')
+@login_required(roles=['Administrador'])
+def pedidos_estados():
+    """Obtener conteo de pedidos por estado"""
+    query = """
+        SELECT estado, COUNT(*) as total
+        FROM PEDIDO
+        GROUP BY estado
+        ORDER BY total DESC
+    """
+    resultados = db.fetch_query(query)
+    estados = {r['estado']: r['total'] for r in resultados}
+    return estados
+
 # ============= MANEJO DE ERRORES =============
 
 @app.errorhandler(404)

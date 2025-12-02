@@ -264,4 +264,204 @@
         </div>
     </div>
 </div>
+
+<!-- Gráficas de Pastel -->
+<div class="row mt-4">
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Top 5 Productos Más Vendidos</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="chartProductosVendidos" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-pie-chart-fill"></i> Ventas por Trabajador</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="chartVentasTrabajador" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Distribución de Estados de Pedidos</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="chartEstadosPedidos" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Gráfica de Productos Más Vendidos
+{% if productos_mas_vendidos %}
+const ctxProductos = document.getElementById('chartProductosVendidos').getContext('2d');
+const chartProductos = new Chart(ctxProductos, {
+    type: 'pie',
+    data: {
+        labels: [
+            {% for producto in productos_mas_vendidos[:5] %}
+            '{{ producto.nombre[:20] }}...',
+            {% endfor %}
+        ],
+        datasets: [{
+            data: [
+                {% for producto in productos_mas_vendidos[:5] %}
+                {{ producto.total_vendido }},
+                {% endfor %}
+            ],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 206, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(153, 102, 255, 0.8)'
+            ],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: document.body.classList.contains('dark-mode') ? '#ffffff' : '#000000'
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.label + ': ' + context.parsed + ' unidades';
+                    }
+                }
+            }
+        }
+    }
+});
+{% endif %}
+
+// Gráfica de Ventas por Trabajador
+{% if ventas_por_trabajador %}
+const ctxTrabajadores = document.getElementById('chartVentasTrabajador').getContext('2d');
+const chartTrabajadores = new Chart(ctxTrabajadores, {
+    type: 'doughnut',
+    data: {
+        labels: [
+            {% for trabajador in ventas_por_trabajador %}
+            '{{ trabajador.nombre }}',
+            {% endfor %}
+        ],
+        datasets: [{
+            data: [
+                {% for trabajador in ventas_por_trabajador %}
+                {{ trabajador.total_ventas or 0 }},
+                {% endfor %}
+            ],
+            backgroundColor: [
+                'rgba(40, 167, 69, 0.8)',
+                'rgba(23, 162, 184, 0.8)',
+                'rgba(255, 193, 7, 0.8)',
+                'rgba(220, 53, 69, 0.8)'
+            ],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: document.body.classList.contains('dark-mode') ? '#ffffff' : '#000000'
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.label + ': $' + context.parsed.toFixed(2);
+                    }
+                }
+            }
+        }
+    }
+});
+{% endif %}
+
+// Gráfica de Estados de Pedidos
+fetch('/api/pedidos/estados')
+    .then(response => response.json())
+    .then(data => {
+        const ctxEstados = document.getElementById('chartEstadosPedidos').getContext('2d');
+        const chartEstados = new Chart(ctxEstados, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(data),
+                datasets: [{
+                    label: 'Cantidad de Pedidos',
+                    data: Object.values(data),
+                    backgroundColor: [
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(153, 102, 255, 0.8)',
+                        'rgba(40, 167, 69, 0.8)',
+                        'rgba(220, 53, 69, 0.8)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: document.body.classList.contains('dark-mode') ? '#ffffff' : '#000000'
+                        },
+                        grid: {
+                            color: document.body.classList.contains('dark-mode') ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: document.body.classList.contains('dark-mode') ? '#ffffff' : '#000000'
+                        },
+                        grid: {
+                            color: document.body.classList.contains('dark-mode') ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Pedidos: ' + context.parsed.y;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}
