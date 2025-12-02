@@ -2,8 +2,7 @@
 Configuración de conexión a la base de datos MySQL
 Sistema de Comercio Electrónico - Fase 2
 """
-import mysql.connector
-from mysql.connector import Error
+import pymysql
 import os
 
 class Database:
@@ -17,69 +16,70 @@ class Database:
     def connect(self):
         """Establece conexión con la base de datos"""
         try:
-            self.connection = mysql.connector.connect(
+            self.connection = pymysql.connect(
                 host=self.host,
                 user=self.user,
                 password=self.password,
-                database=self.database
+                database=self.database,
+                cursorclass=pymysql.cursors.DictCursor
             )
-            if self.connection.is_connected():
-                print("Conexión exitosa a la base de datos")
-                return self.connection
-        except Error as e:
+            print("Conexión exitosa a la base de datos")
+            return self.connection
+        except Exception as e:
             print(f"Error al conectar a MySQL: {e}")
             return None
     
     def disconnect(self):
         """Cierra la conexión con la base de datos"""
-        if self.connection and self.connection.is_connected():
+        if self.connection:
             self.connection.close()
             print("Conexión cerrada")
     
     def execute_query(self, query, params=None):
         """Ejecuta una consulta SQL (INSERT, UPDATE, DELETE)"""
         try:
-            cursor = self.connection.cursor()
-            if params:
-                cursor.execute(query, params)
-            else:
-                cursor.execute(query)
-            self.connection.commit()
-            last_id = cursor.lastrowid
-            print(f"[DEBUG DB] Query ejecutado exitosamente. LastRowID: {last_id}")
-            return last_id
-        except Error as e:
+            with self.connection.cursor() as cursor:
+                if params:
+                    cursor.execute(query, params)
+                else:
+                    cursor.execute(query)
+                self.connection.commit()
+                last_id = cursor.lastrowid
+                print(f"[DEBUG DB] Query ejecutado exitosamente. LastRowID: {last_id}")
+                return last_id
+        except Exception as e:
             print(f"[ERROR DB] Error ejecutando query: {e}")
             print(f"[ERROR DB] Query: {query}")
             print(f"[ERROR DB] Params: {params}")
             import traceback
             traceback.print_exc()
-            self.connection.rollback()
+            if self.connection:
+                self.connection.rollback()
             return None
     
     def fetch_query(self, query, params=None):
         """Ejecuta una consulta SELECT y retorna los resultados"""
         try:
-            cursor = self.connection.cursor(dictionary=True)
-            if params:
-                cursor.execute(query, params)
-            else:
-                cursor.execute(query)
-            return cursor.fetchall()
-        except Error as e:
+            with self.connection.cursor() as cursor:
+                if params:
+                    cursor.execute(query, params)
+                else:
+                    cursor.execute(query)
+                return cursor.fetchall()
+        except Exception as e:
             print(f"Error en fetch query: {e}")
             return []
     
     def fetch_one(self, query, params=None):
         """Ejecuta una consulta SELECT y retorna un solo resultado"""
         try:
-            cursor = self.connection.cursor(dictionary=True)
-            if params:
-                cursor.execute(query, params)
-            else:
-                cursor.execute(query)
-            return cursor.fetchone()
-        except Error as e:
+            with self.connection.cursor() as cursor:
+                if params:
+                    cursor.execute(query, params)
+                else:
+                    cursor.execute(query)
+                return cursor.fetchone()
+        except Exception as e:
             print(f"Error en fetch one: {e}")
             return None
 
