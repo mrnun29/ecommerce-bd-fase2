@@ -612,14 +612,16 @@ def admin_analiticas():
     # Todos los pedidos recientes
     pedidos_recientes = Pedido.obtener_todos()[:10]  # Últimos 10
     
-    # Top 10 productos (simulado: contamos pedidos por estado y asignamos aleatoriamente)
-    # Como no hay CARRITO, mostramos productos con más stock vendido (simulado)
+    # Top 10 productos más vendidos (basado en CARRITO)
     query_productos_vendidos = """
-        SELECT id_producto, nombre, precio, stock,
-               (1010 - stock) as total_vendido,
-               (1010 - stock) * precio as ingresos_totales
-        FROM PRODUCTO
-        WHERE (1010 - stock) > 0
+        SELECT p.id_producto, p.nombre, p.precio, p.stock,
+               SUM(c.cantidad) as total_vendido,
+               SUM(c.cantidad * c.precio_unitario) as ingresos_totales
+        FROM PRODUCTO p
+        JOIN CARRITO c ON p.id_producto = c.PRODUCTO_id_producto
+        JOIN PEDIDO ped ON c.PEDIDO_id_pedido = ped.id_pedido
+        WHERE ped.estado IN ('Entregado', 'Procesando', 'Enviado')
+        GROUP BY p.id_producto
         ORDER BY total_vendido DESC
         LIMIT 10
     """

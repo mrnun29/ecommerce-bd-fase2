@@ -273,32 +273,62 @@ def seed_database():
     
     print("✅ 1000 productos adicionales creados")
     
-    # 7. Generar 1000 pedidos
-    print("\n7. Generando 1000 pedidos de prueba...")
+    # 7. Generar 1000 pedidos con productos en el carrito
+    print("\n7. Generando 1000 pedidos con productos...")
     
     estados = ['Pendiente', 'Procesando', 'Enviado', 'Entregado', 'Cancelado']
     # IDs de clientes: del 4 al 23 (20 clientes)
     clientes = list(range(4, 24))
     fecha_inicio = datetime.now() - timedelta(days=365)
     
+    # Obtener IDs de productos disponibles (1 a 1010)
+    productos_ids = list(range(1, 1011))
+    
     for i in range(1, 1001):
         dias_aleatorios = random.randint(0, 365)
         fecha_pedido = fecha_inicio + timedelta(days=dias_aleatorios)
-        total = round(random.uniform(100.00, 10000.00), 2)
         estado = random.choice(estados)
         id_cliente = random.choice(clientes)  # Cliente que compra
         procesado_por = random.choice([1, 2])  # Admin o trabajador que procesa
         
-        query = """
+        # Seleccionar 1-5 productos aleatorios para este pedido
+        num_productos = random.randint(1, 5)
+        productos_pedido = random.sample(productos_ids, num_productos)
+        
+        # Calcular total basado en productos seleccionados
+        total_pedido = 0
+        items_carrito = []
+        
+        for id_producto in productos_pedido:
+            # Obtener precio del producto
+            query_precio = "SELECT precio FROM PRODUCTO WHERE id_producto = %s"
+            resultado = db.fetch_one(query_precio, (id_producto,))
+            if resultado:
+                precio = resultado['precio']
+                cantidad = random.randint(1, 3)
+                total_pedido += precio * cantidad
+                items_carrito.append((id_producto, cantidad, precio))
+        
+        # Insertar pedido
+        query_pedido = """
             INSERT INTO PEDIDO (total, estado, fecha, id_usuario, procesado_por)
             VALUES (%s, %s, %s, %s, %s)
         """
-        db.execute_query(query, (total, estado, fecha_pedido, id_cliente, procesado_por))
+        id_pedido = db.execute_query(query_pedido, (round(total_pedido, 2), estado, fecha_pedido, id_cliente, procesado_por))
+        
+        # Insertar items en CARRITO
+        if id_pedido:
+            for id_producto, cantidad, precio in items_carrito:
+                query_carrito = """
+                    INSERT INTO CARRITO (PRODUCTO_id_producto, PEDIDO_id_pedido, cantidad, precio_unitario)
+                    VALUES (%s, %s, %s, %s)
+                """
+                db.execute_query(query_carrito, (id_producto, id_pedido, cantidad, precio))
         
         if i % 100 == 0:
-            print(f"  ✓ {i} pedidos generados...")
+            print(f"  ✓ {i} pedidos con productos generados...")
     
-    print("✅ 1000 pedidos creados")
+    print("✅ 1000 pedidos con productos creados")
     
     print("\n" + "="*50)
     print("✅ Todos los datos insertados correctamente!")
@@ -306,7 +336,7 @@ def seed_database():
     print("  - 20 clientes anónimos")
     print("  - 2 proveedores")
     print("  - 1010 productos")
-    print("  - 1000 pedidos")
+    print("  - 1000 pedidos (con 1-5 productos cada uno en CARRITO)")
     print("="*50)
     print("\n🔑 Credenciales de acceso:")
     print("\n👨‍💼 Administrador:")
