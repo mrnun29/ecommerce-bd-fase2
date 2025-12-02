@@ -626,6 +626,9 @@ def admin_analiticas():
         LIMIT 10
     """
     productos_mas_vendidos = db.fetch_query(query_productos_vendidos)
+    print(f"[DEBUG] Productos más vendidos encontrados: {len(productos_mas_vendidos)}")
+    if productos_mas_vendidos:
+        print(f"[DEBUG] Primer producto: {productos_mas_vendidos[0]}")
     
     # Ventas por trabajador
     query_ventas_trabajador = """

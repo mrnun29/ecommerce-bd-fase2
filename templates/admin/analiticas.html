@@ -228,23 +228,6 @@
 <div class="row mt-4">
     <div class="col-md-6 mb-4">
         <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Top 10 Productos Más Vendidos</h5>
-            </div>
-            <div class="card-body">
-                {% if productos_mas_vendidos %}
-                <canvas id="chartProductosVendidos" style="max-height: 300px;"></canvas>
-                {% else %}
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle"></i> No hay ventas registradas aún.
-                </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-6 mb-4">
-        <div class="card shadow-sm">
             <div class="card-header bg-success text-white">
                 <h5 class="mb-0"><i class="bi bi-pie-chart-fill"></i> Ventas por Trabajador</h5>
             </div>
@@ -341,60 +324,6 @@ fetch('/api/clientes/top10')
             }
         });
     });
-
-// Gráfica de Productos Más Vendidos
-{% if productos_mas_vendidos %}
-const ctxProductos = document.getElementById('chartProductosVendidos').getContext('2d');
-const chartProductos = new Chart(ctxProductos, {
-    type: 'pie',
-    data: {
-        labels: [
-            {% for producto in productos_mas_vendidos[:10] %}
-            '{{ producto.nombre[:20] }}...',
-            {% endfor %}
-        ],
-        datasets: [{
-            data: [
-                {% for producto in productos_mas_vendidos[:10] %}
-                {{ producto.total_vendido }},
-                {% endfor %}
-            ],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.8)',
-                'rgba(54, 162, 235, 0.8)',
-                'rgba(255, 206, 86, 0.8)',
-                'rgba(75, 192, 192, 0.8)',
-                'rgba(153, 102, 255, 0.8)',
-                'rgba(255, 159, 64, 0.8)',
-                'rgba(201, 203, 207, 0.8)',
-                'rgba(83, 102, 255, 0.8)',
-                'rgba(255, 99, 255, 0.8)',
-                'rgba(99, 255, 132, 0.8)'
-            ],
-            borderWidth: 2
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    color: document.body.classList.contains('dark-mode') ? '#ffffff' : '#000000'
-                }
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return context.label + ': ' + context.parsed + ' unidades';
-                    }
-                }
-            }
-        }
-    }
-});
-{% endif %}
 
 // Gráfica de Ventas por Trabajador
 {% if ventas_por_trabajador %}
