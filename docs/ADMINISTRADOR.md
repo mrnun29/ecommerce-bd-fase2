@@ -395,22 +395,6 @@ El sistema expone endpoints API para consultas avanzadas:
 - Revisa pedidos cancelados para identificar problemas
 - Mantén comunicación con clientes sobre entregas
 
-## Solución de Problemas Comunes
-
-### Problema: No puedo eliminar un producto
-**Solución:** Verifica que el producto no esté en pedidos activos. Si es necesario, edita el producto y reduce su stock a 0, o inhabilítalo en lugar de eliminarlo.
-
-### Problema: Usuario proveedor no puede registrar abastecimientos
-**Solución:** 
-1. Verifica que el usuario tenga rol "Proveedor"
-2. Confirma que esté vinculado a una empresa en la tabla de proveedores
-3. Si no está vinculado, usa "Vincular Usuario" en la lista de proveedores
-
-### Problema: Las analíticas no muestran datos
-**Solución:** Asegúrate de que hay pedidos procesados en el sistema. Las analíticas se calculan en base a pedidos completados.
-
-### Problema: Stock no se actualiza después de un pedido
-**Solución:** Verifica que el pedido no esté en estado "Cancelado". Solo los pedidos procesados descuentan del inventario.
 
 ## Reportes y Consultas SQL Implementadas
 
@@ -423,49 +407,6 @@ El sistema ejecuta las siguientes consultas en segundo plano:
 5. **Ranking de ingresos:** JOIN con agregación por producto
 6. **Top clientes:** Agrupación por `id_usuario` con COUNT de pedidos
 
-## Navegación Rápida
-
-| Función | Ruta | Atajo Dashboard |
-|---------|------|-----------------|
-| Inicio | `/` | Inicio |
-| Dashboard Admin | `/dashboard` | - |
-| Productos | `/productos` | Gestionar Productos |
-| Crear Producto | `/productos/crear` | Crear Producto |
-| Usuarios | `/usuarios` | Ver Usuarios |
-| Crear Usuario | `/usuarios/crear` | Crear Usuario |
-| Proveedores | `/proveedores` | Gestionar Proveedores |
-| Crear Proveedor | `/proveedores/crear` | Crear Proveedor |
-| Inventario | `/inventario` | Ver Inventario |
-| Stock Bajo | `/proveedores/stock-bajo` | Stock Bajo |
-| Pedidos | `/pedidos` | Ver Pedidos |
-| Analíticas | `/admin/analiticas` | Analíticas |
-
-## Recomendaciones de Uso
-
-1. **Inicio del día:**
-   - Revisa el panel de analíticas
-   - Verifica productos con stock bajo
-   - Revisa pedidos pendientes
-
-2. **Gestión semanal:**
-   - Analiza desempeño de trabajadores
-   - Actualiza precios si es necesario
-   - Contacta proveedores para reabastecimientos
-
-3. **Gestión mensual:**
-   - Revisa ventas totales del mes
-   - Identifica productos estrella y de baja rotación
-   - Audita usuarios activos e inactivos
-   - Analiza tendencias de compra
-
-4. **Mantenimiento:**
-   - Realiza respaldos regulares de la base de datos
-   - Revisa logs del sistema
-   - Actualiza información de proveedores
-
-## Soporte
-
-Para problemas técnicos o consultas sobre el sistema, contacta al equipo de desarrollo o consulta la documentación técnica en el repositorio del proyecto.
 
 ---
 
