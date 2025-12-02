@@ -7,6 +7,8 @@ from config.database import db
 from models.usuario import Usuario
 from models.producto import Producto
 from models.proveedor import Proveedor
+import random
+from datetime import datetime, timedelta
 
 def seed_database():
     """Insertar datos de prueba en la base de datos"""
@@ -201,8 +203,82 @@ def seed_database():
     
     print("✅ Abastecimientos registrados")
     
+    # 5. Generar 1000 productos adicionales
+    print("\n5. Generando 1000 productos adicionales...")
+    
+    categorias = [
+        'Laptops', 'Monitores', 'Teclados', 'Mouse', 'Auriculares',
+        'Webcams', 'Impresoras', 'Discos Duros', 'Cables', 'Hubs',
+        'Memorias USB', 'Tarjetas SD', 'Adaptadores', 'Cargadores',
+        'Bocinas', 'Microfonos', 'Sillas', 'Escritorios', 'Lamparas',
+        'Organizadores'
+    ]
+    
+    marcas = [
+        'HP', 'Dell', 'Lenovo', 'Asus', 'Acer', 'Samsung', 'LG',
+        'Logitech', 'Razer', 'Corsair', 'Sony', 'Kingston', 'SanDisk',
+        'Seagate', 'Canon', 'Epson', 'Microsoft', 'Apple', 'Xiaomi'
+    ]
+    
+    modelos = [
+        'Pro', 'Ultra', 'Plus', 'Max', 'Premium', 'Elite', 'Standard',
+        'Basic', 'Advanced', 'Gaming', 'Professional', 'Series', 'Edition',
+        'HD', 'RGB', '2024', 'X', 'Air', 'Lite', 'Mini'
+    ]
+    
+    for i in range(1, 1001):
+        categoria = random.choice(categorias)
+        marca = random.choice(marcas)
+        modelo = random.choice(modelos)
+        
+        producto = {
+            'nombre': f'{marca} {categoria} {modelo} #{i}',
+            'descripcion': f'{categoria} de alta calidad marca {marca} modelo {modelo}',
+            'precio': round(random.uniform(99.99, 19999.99), 2),
+            'stock': random.randint(0, 200),
+            'nivel_minimo': random.randint(5, 30),
+            'imagen': f'{categoria.lower()}-{i}.jpg'
+        }
+        
+        Producto.crear(producto)
+        
+        if i % 100 == 0:
+            print(f"  ✓ {i} productos generados...")
+    
+    print("✅ 1000 productos adicionales creados")
+    
+    # 6. Generar 1000 pedidos
+    print("\n6. Generando 1000 pedidos de prueba...")
+    
+    estados = ['Pendiente', 'Procesando', 'Enviado', 'Entregado', 'Cancelado']
+    usuarios = [1, 2, 3]  # Admin, trabajador, proveedor
+    fecha_inicio = datetime.now() - timedelta(days=365)
+    
+    for i in range(1, 1001):
+        dias_aleatorios = random.randint(0, 365)
+        fecha_pedido = fecha_inicio + timedelta(days=dias_aleatorios)
+        total = round(random.uniform(100.00, 10000.00), 2)
+        estado = random.choice(estados)
+        id_usuario = random.choice(usuarios)
+        procesado_por = random.choice([1, 2])  # Admin o trabajador
+        
+        query = """
+            INSERT INTO PEDIDO (total, estado, fecha, id_usuario, procesado_por)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        db.execute_query(query, (total, estado, fecha_pedido, id_usuario, procesado_por))
+        
+        if i % 100 == 0:
+            print(f"  ✓ {i} pedidos generados...")
+    
+    print("✅ 1000 pedidos creados")
+    
     print("\n" + "="*50)
-    print("✅ Datos de prueba insertados correctamente!")
+    print("✅ Todos los datos insertados correctamente!")
+    print("  - 3 usuarios")
+    print("  - 2 proveedores")
+    print("  - 1010 productos")
+    print("  - 1000 pedidos")
     print("="*50)
     print("\n🔑 Credenciales de acceso:")
     print("\n👨‍💼 Administrador:")
