@@ -1,0 +1,32 @@
+PUNTOS EXTRA IMPLEMENTADOS - SISTEMA DE COMERCIO ELECTRÓNICO
+================================================================
+
+1. REPORTES CON INFORMACIÓN CRUZADA (5 pts)
+Se implementó el panel de analíticas en /admin/analiticas que combina datos entre múltiples tablas: productos más vendidos (JOIN entre PRODUCTO, CARRITO y PEDIDO), ventas por trabajador (JOIN entre USUARIO y PEDIDO), total de ventas del mes con filtros temporales, y productos con stock bajo relacionados con proveedores. Todas estas consultas utilizan GROUP BY, agregaciones (SUM, COUNT) y múltiples JOINs para generar información cruzada útil para la toma de decisiones.
+
+2. VOLUMEN DE DATOS (10 pts)
+El sistema cuenta con un script de seed (seed_refactor.py) que genera automáticamente 1010 productos con datos variados (combinaciones aleatorias de marcas, categorías y modelos), 1000 pedidos con fechas distribuidas en el último año, 23 usuarios (3 del sistema + 20 clientes), y 2 proveedores. Todos estos datos se insertan automáticamente al ejecutar docker-compose up por primera vez, permitiendo validar la escalabilidad del sistema con volúmenes realistas de información.
+
+3. SEGURIDAD PARA ACCESOS SIMULTÁNEOS (10 pts)
+MySQL maneja automáticamente la concurrencia mediante su sistema de transacciones InnoDB. El código utiliza connection.commit() después de cada operación de escritura y connection.rollback() en caso de error (líneas 47 y 57 de database.py), garantizando atomicidad. La reconexión automática implementada en @app.before_request verifica el estado de la conexión antes de cada petición, evitando errores por conexiones perdidas en entornos con múltiples usuarios concurrentes.
+
+4. INTEGRIDAD Y PROTECCIÓN ANTE ATAQUES (10 pts)
+Se utilizan queries parametrizadas en todas las operaciones de base de datos (cursor.execute(query, params)) para prevenir inyección SQL. El sistema implementa hash de contraseñas con werkzeug.security (generate_password_hash y check_password_hash usando scrypt), validación de roles mediante el decorador @login_required(roles=[...]), manejo de sesiones seguras con Flask sessions, y constraints de foreign keys en el esquema SQL que garantizan integridad referencial (ON DELETE CASCADE/NO ACTION según el caso).
+
+5. ESCALABILIDAD Y DESEMPEÑO (15 pts)
+El esquema incluye índices en todas las foreign keys y campos de búsqueda frecuente (correo UNIQUE, id_usuario, id_producto, etc.). Con 1010 productos y 1000 pedidos, la página de inventario carga en tiempo aceptable gracias a queries optimizadas sin subconsultas innecesarias. El motor InnoDB con cache de conexiones y la arquitectura desacoplada (Flask + MySQL en contenedores separados) permite escalar horizontalmente agregando más workers de Flask o migrando MySQL a un servidor dedicado sin cambios en el código.
+
+6. BITÁCORA (LOG) DE OPERACIONES (5 pts)
+El sistema implementa logging mediante prints estratégicos en database.py que registran cada query ejecutado con sus parámetros ([DEBUG DB], [ERROR DB]), incluyendo errores con traceback completo. Flask en modo debug registra todas las peticiones HTTP con timestamp, método, ruta y código de respuesta. Estos logs son accesibles mediante docker logs ecommerce_web y docker logs ecommerce_mysql, facilitando el monitoreo y auditoría de operaciones críticas como inserts, updates y errores de conexión.
+
+7. DOCKERIZACIÓN DEL SISTEMA (10 pts)
+El proyecto incluye docker-compose.yml que orquesta dos servicios: MySQL 8.0 con volumen persistente y healthcheck, y Flask con dependencias Python. Los contenedores se comunican por red interna (ecommerce-bd-fase2_default), el schema SQL y script de seed se montan en /docker-entrypoint-initdb.d/ para ejecución automática, y el sistema completo se despliega con un único comando: docker-compose up -d. Las variables de entorno (DB_HOST, DB_USER, DB_PASSWORD) configuran la conexión automáticamente.
+
+8. ARQUITECTURA DESACOPLADA (10 pts)
+El backend está estructurado en capas: config/database.py (capa de datos), models/*.py (lógica de negocio y queries), app.py (controladores/rutas), y templates/*.html (vistas). Aunque Flask renderiza HTML en este caso, la estructura permite fácilmente exponer APIs RESTful (ya existe /api/productos/buscar) y conectar un frontend separado (React, Vue) sin cambios en la lógica. Los modelos son independientes y reutilizables, siguiendo el patrón MVC adaptado.
+
+9. CONTROL DE VERSIONES (5 pts)
+El proyecto está versionado en Git con repositorio público en GitHub (mrnun29/ecommerce-bd-fase2). El historial muestra commits descriptivos para cada feature: "Fix: Arreglar visibilidad del texto de trabajadores en modo oscuro", "Feat: Agregar rol Cliente y crear 20 clientes anónimos", "Feat: Agregar generación automática de 1000 productos y 1000 pedidos al seed". El README.md incluye documentación de instalación, uso, credenciales de acceso y estructura del proyecto.
+
+10. DISEÑO RESPONSIVO (5 pts)
+Se utiliza Bootstrap 5.3 como framework CSS responsivo con sistema de grid (row/col-md-*). El meta viewport está configurado (<meta name="viewport" content="width=device-width, initial-scale=1.0">) y todas las tablas usan .table-responsive. Los componentes se adaptan automáticamente a móviles: navegación colapsable, cards que se apilan verticalmente, formularios con inputs responsive, y botones que ajustan su tamaño. Además, se implementó un modo oscuro toggle que persiste en localStorage, mejorando la experiencia en distintos dispositivos y condiciones de luz.
