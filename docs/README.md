@@ -112,8 +112,8 @@ Cada guía sigue una estructura consistente:
 | Rol | Correo | Contraseña | Guía |
 |-----|--------|------------|------|
 | Administrador | admin@ecommerce.com | admin123 | [Ver guía](ADMINISTRADOR.md) |
-| Trabajador | trabajador@ecommerce.com | 123456 | [Ver guía](TRABAJADOR.md) |
-| Proveedor | proveedor@ecommerce.com | 123456 | [Ver guía](PROVEEDOR.md) |
+| Trabajador | trabajador@ecommerce.com | proveedor123 | [Ver guía](TRABAJADOR.md) |
+| Proveedor | proveedor@ecommerce.com | trabajador123 | [Ver guía](PROVEEDOR.md) |
 
 ---
 
