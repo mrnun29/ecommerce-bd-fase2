@@ -203,7 +203,33 @@ def seed_database():
     
     print("✅ Abastecimientos registrados")
     
-    # 5. Generar 1000 productos adicionales
+    # 5. Crear clientes anónimos
+    print("\n5. Creando clientes anónimos...")
+    
+    nombres_clientes = [
+        'Carlos Martínez', 'María González', 'José Rodríguez', 'Ana López',
+        'Luis Hernández', 'Carmen Pérez', 'Francisco García', 'Isabel Sánchez',
+        'Antonio Ramírez', 'Rosa Torres', 'Manuel Flores', 'Teresa Romero',
+        'Pedro Jiménez', 'Laura Ruiz', 'Miguel Morales', 'Patricia Castro',
+        'Juan Ortiz', 'Sofía Gómez', 'Diego Silva', 'Elena Vargas'
+    ]
+    
+    for i, nombre in enumerate(nombres_clientes, 1):
+        cliente_data = {
+            'nombre': nombre,
+            'correo': f'cliente{i}@email.com',
+            'password': generate_password_hash('cliente123'),
+            'rol': 'Cliente',
+            'calle': f'Calle {i}',
+            'numero': i * 10,
+            'ciudad': 'Querétaro',
+            'codigo_postal': f'7600{i}'
+        }
+        Usuario.crear(cliente_data)
+    
+    print(f"✅ {len(nombres_clientes)} clientes anónimos creados")
+    
+    # 6. Generar 1000 productos adicionales
     print("\n5. Generando 1000 productos adicionales...")
     
     categorias = [
@@ -247,11 +273,12 @@ def seed_database():
     
     print("✅ 1000 productos adicionales creados")
     
-    # 6. Generar 1000 pedidos
-    print("\n6. Generando 1000 pedidos de prueba...")
+    # 7. Generar 1000 pedidos
+    print("\n7. Generando 1000 pedidos de prueba...")
     
     estados = ['Pendiente', 'Procesando', 'Enviado', 'Entregado', 'Cancelado']
-    usuarios = [1, 2, 3]  # Admin, trabajador, proveedor
+    # IDs de clientes: del 4 al 23 (20 clientes)
+    clientes = list(range(4, 24))
     fecha_inicio = datetime.now() - timedelta(days=365)
     
     for i in range(1, 1001):
@@ -259,14 +286,14 @@ def seed_database():
         fecha_pedido = fecha_inicio + timedelta(days=dias_aleatorios)
         total = round(random.uniform(100.00, 10000.00), 2)
         estado = random.choice(estados)
-        id_usuario = random.choice(usuarios)
-        procesado_por = random.choice([1, 2])  # Admin o trabajador
+        id_cliente = random.choice(clientes)  # Cliente que compra
+        procesado_por = random.choice([1, 2])  # Admin o trabajador que procesa
         
         query = """
             INSERT INTO PEDIDO (total, estado, fecha, id_usuario, procesado_por)
             VALUES (%s, %s, %s, %s, %s)
         """
-        db.execute_query(query, (total, estado, fecha_pedido, id_usuario, procesado_por))
+        db.execute_query(query, (total, estado, fecha_pedido, id_cliente, procesado_por))
         
         if i % 100 == 0:
             print(f"  ✓ {i} pedidos generados...")
@@ -275,7 +302,8 @@ def seed_database():
     
     print("\n" + "="*50)
     print("✅ Todos los datos insertados correctamente!")
-    print("  - 3 usuarios")
+    print("  - 3 usuarios del sistema (Admin, Trabajador, Proveedor)")
+    print("  - 20 clientes anónimos")
     print("  - 2 proveedores")
     print("  - 1010 productos")
     print("  - 1000 pedidos")

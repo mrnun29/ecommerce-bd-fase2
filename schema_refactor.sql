@@ -19,13 +19,13 @@ CREATE TABLE IF NOT EXISTS `DIRECCION` (
   PRIMARY KEY (`id_direccion`)
 ) ENGINE = InnoDB;
 
--- Tabla USUARIO (solo 3 roles: Administrador, Trabajador, Proveedor)
+-- Tabla USUARIO (4 roles: Administrador, Trabajador, Proveedor, Cliente)
 CREATE TABLE IF NOT EXISTS `USUARIO` (
   `id_usuario` INT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `correo` VARCHAR(60) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
-  `rol` ENUM('Administrador', 'Trabajador', 'Proveedor') NOT NULL DEFAULT 'Trabajador',
+  `rol` ENUM('Administrador', 'Trabajador', 'Proveedor', 'Cliente') NOT NULL DEFAULT 'Cliente',
   `activo` BOOLEAN NOT NULL DEFAULT TRUE,
   `id_direccion` INT NOT NULL,
   PRIMARY KEY (`id_usuario`),
