@@ -18,9 +18,6 @@
 12. [Validaciones Implementadas](#-validaciones-implementadas)
 13. [Tecnologías Utilizadas](#-tecnologías-utilizadas)
 14. [Flujo del Proceso](#-flujo-del-proceso)
-15. [Puntos Extra Implementados](#-puntos-extra-implementados)
-16. [Próximas Mejoras](#-próximas-mejoras)
-17. [Soporte](#-soporte)
 
 ## Equipo de Desarrollo
 - Alberto Romero Mañón (00439959)
@@ -344,13 +341,7 @@ Documentación para proveedores:
 
 ## Contribuciones
 
-Este proyecto es parte del curso de Bases de Datos. Para mejoras o sugerencias:
-
-1. Crear un issue describiendo la mejora
-2. Fork del repositorio
-3. Crear una rama para la feature
-4. Commit de cambios
-5. Pull request con descripción detallada
+Este proyecto es parte del curso de Bases de Datos.
 
 ## Licencia
 
