@@ -612,7 +612,7 @@ def admin_analiticas():
     # Todos los pedidos recientes
     pedidos_recientes = Pedido.obtener_todos()[:10]  # Últimos 10
     
-    # Productos más vendidos
+    # Productos más vendidos (solo pedidos entregados o procesando)
     query_productos_vendidos = """
         SELECT p.id_producto, p.nombre, p.precio, p.stock,
                SUM(c.cantidad) as total_vendido,
@@ -620,7 +620,7 @@ def admin_analiticas():
         FROM PRODUCTO p
         JOIN CARRITO c ON p.id_producto = c.PRODUCTO_id_producto
         JOIN PEDIDO ped ON c.PEDIDO_id_pedido = ped.id_pedido
-        WHERE ped.estado != 'Cancelado'
+        WHERE ped.estado IN ('Entregado', 'Procesando', 'Enviado')
         GROUP BY p.id_producto
         ORDER BY total_vendido DESC
         LIMIT 10
