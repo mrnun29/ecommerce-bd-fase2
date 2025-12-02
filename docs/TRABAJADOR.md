@@ -7,7 +7,7 @@ El **Trabajador** (o Empleado) es el rol encargado de procesar ventas directas e
 ## Credenciales de Acceso
 
 - **Correo:** `trabajador@ecommerce.com`
-- **Contraseña:** `123456`
+- **Contraseña:** `trabajador123`
 
 ## Permisos y Capacidades
 
