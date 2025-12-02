@@ -7,7 +7,7 @@ El **Proveedor** es el rol encargado de monitorear el inventario y registrar aba
 ## Credenciales de Acceso
 
 - **Correo:** `proveedor@ecommerce.com`
-- **Contraseña:** `123456`
+- **Contraseña:** `proveedor123`
 
 ## Permisos y Capacidades
 
