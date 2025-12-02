@@ -1,6 +1,26 @@
-# 🛒 Sistema de Comercio Electrónico con Gestión de Inventarios
+# 🛍️ Sistema de Comercio Electrónico con Gestión de Inventarios
 
 **Bases de Datos - Fase 2: Implementación**
+
+## 📚 Índice
+
+1. [Equipo de Desarrollo](#-equipo-de-desarrollo)
+2. [Descripción del Proyecto](#-descripción-del-proyecto)
+3. [Arquitectura del Sistema](#️-arquitectura-del-sistema)
+4. [Base de Datos](#️-base-de-datos)
+5. [Instalación y Configuración](#-instalación-y-configuración)
+6. [Usuarios de Prueba](#-usuarios-de-prueba)
+7. [Documentación Detallada por Rol](#-documentación-detallada-por-rol)
+8. [Uso del Sistema](#-uso-del-sistema)
+9. [Seguridad](#-seguridad)
+10. [Funcionalidades Principales](#-funcionalidades-principales)
+11. [Consultas en Álgebra Relacional](#-consultas-en-álgebra-relacional-implementadas)
+12. [Validaciones Implementadas](#-validaciones-implementadas)
+13. [Tecnologías Utilizadas](#️-tecnologías-utilizadas)
+14. [Flujo del Proceso](#-flujo-del-proceso)
+15. [Puntos Extra Implementados](#-puntos-extra-implementados)
+16. [Próximas Mejoras](#-próximas-mejoras)
+17. [Soporte](#-soporte)
 
 ## 👥 Equipo de Desarrollo
 - Alberto Romero Mañón (00439959)
@@ -33,9 +53,10 @@ Sistema integral de comercio electrónico desarrollado con Flask y MySQL que imp
 ```
 ecommerce_db/
 ├── app.py                  # Aplicación principal Flask
-├── schema.sql              # Script de creación de base de datos
+├── schema_refactor.sql     # Script de creación de base de datos
 ├── requirements.txt        # Dependencias Python
-├── .env.example           # Configuración de ejemplo
+├── docker-compose.yml      # Orquestación de contenedores
+├── Dockerfile              # Imagen de Docker para Flask
 ├── config/
 │   └── database.py        # Conexión a MySQL
 ├── models/
@@ -43,13 +64,20 @@ ecommerce_db/
 │   ├── producto.py        # Modelo Producto
 │   ├── pedido.py          # Modelo Pedido y Pago
 │   └── proveedor.py       # Modelo Proveedor
-└── templates/             # Plantillas HTML (a crear)
-    ├── index.html
-    ├── login.html
-    ├── registro.html
-    ├── productos/
-    ├── pedidos/
-    └── proveedores/
+├── templates/             # Plantillas HTML completas
+│   ├── index.html
+│   ├── login.html
+│   ├── dashboard_*.html
+│   ├── productos/
+│   ├── pedidos/
+│   ├── proveedores/
+│   └── ...
+└── docs/                  # Documentación completa
+    ├── README.md          # Índice de documentación
+    ├── ADMINISTRADOR.md   # Guía del Administrador
+    ├── TRABAJADOR.md      # Guía del Trabajador
+    ├── PROVEEDOR.md       # Guía del Proveedor
+    └── PUNTOS_EXTRAS_IMPLEMENTADOS.txt  # Puntos extra
 ```
 
 ## 🗄️ Base de Datos
@@ -229,64 +257,80 @@ El sistema incluye 3 usuarios predefinidos, uno por cada rol:
 - **Base de Datos**: MySQL 8.0
 - **ORM/Conexión**: mysql-connector-python
 - **Seguridad**: Werkzeug (hash de contraseñas)
-- **Frontend**: HTML5, CSS3, JavaScript (a implementar)
+- **Frontend**: HTML5, CSS3, Bootstrap 5.3, JavaScript
+- **Containerización**: Docker, Docker Compose
+- **Control de Versiones**: Git, GitHub
+
+## 📚 Documentación Detallada por Rol
+
+Cada rol tiene su propia guía completa de usuario con instrucciones detalladas, casos de uso y mejores prácticas:
+
+### 📖 [Guía del Administrador](docs/ADMINISTRADOR.md)
+Documentación completa para administradores del sistema:
+- Gestión de usuarios, productos y proveedores
+- Panel de analíticas y reportes
+- Control total del inventario
+- Vinculación de proveedores
+- Casos de uso y resolución de problemas
+
+### 📖 [Guía del Trabajador](docs/TRABAJADOR.md)
+Documentación para trabajadores/empleados:
+- Procesar ventas en punto de venta
+- Gestión de productos e inventario
+- Ver y actualizar pedidos
+- Procedimientos de turno (inicio, durante, fin)
+- Checklists diarios y semanales
+
+### 📖 [Guía del Proveedor](docs/PROVEEDOR.md)
+Documentación para proveedores:
+- Consultar inventario y stock bajo
+- Registrar abastecimientos
+- Historial de entregas
+- Rutinas diarias y mensuales
+- Generación de reportes para facturación
 
 ## 📚 Uso del Sistema
 
 ### 1️⃣ Iniciar Sesión
 
 1. Acceder a `http://localhost:5001`
-2. Usar cualquiera de las credenciales de prueba
+2. Usar cualquiera de las credenciales de prueba (ver sección "Usuarios de Prueba")
 3. El sistema te redirigirá al dashboard correspondiente a tu rol
+4. **Consulta la guía de tu rol** en la carpeta `docs/` para instrucciones detalladas
 
 ### 2️⃣ Como Administrador
 
-**Gestionar Productos:**
-- Dashboard → Productos → Crear Producto
-- Llenar formulario con nombre, precio, stock, etc.
-- El producto aparecerá en el catálogo
+**Para una guía completa, consulta [docs/ADMINISTRADOR.md](docs/ADMINISTRADOR.md)**
 
-**Gestionar Usuarios:**
-- Dashboard → Proveedores y Trabajadores
-- Ver lista de trabajadores y proveedores
-- Editar o eliminar usuarios (botón de lápiz/basura)
-- Crear nuevos trabajadores o proveedores
-
-**Vincular Usuarios a Proveedores:**
-- Dashboard → Proveedores (lista)
-- Clic en "Vincular Usuario" en cada empresa
-- Seleccionar usuario proveedor sin vincular
-- El usuario ahora puede registrar abastecimientos
+**Funciones principales:**
+- Gestión completa de productos (CRUD)
+- Administración de usuarios (crear, editar, inhabilitar, eliminar)
+- Gestión de proveedores y vinculación de usuarios
+- Panel de analíticas con reportes en tiempo real
+- Control de inventario con alertas automáticas
+- Visualización de todos los pedidos del sistema
 
 ### 3️⃣ Como Trabajador
 
-**Procesar Ventas:**
-- Dashboard → Procesar Ventas
-- Seleccionar productos del dropdown
-- Ingresar cantidades
-- Elegir método de pago (Efectivo/Tarjeta/Transferencia)
-- Clic en "Procesar Venta"
-- El inventario se actualiza automáticamente
+**Para una guía completa, consulta [docs/TRABAJADOR.md](docs/TRABAJADOR.md)**
 
-**Ver Pedidos:**
-- Dashboard → Mis Pedidos
-- Ver historial de ventas procesadas
+**Funciones principales:**
+- Procesar ventas directas en punto de venta
+- Gestionar catálogo de productos (crear/editar)
+- Consultar y actualizar inventario
+- Ver y actualizar estado de pedidos procesados
+- Identificar productos con stock bajo
 
 ### 4️⃣ Como Proveedor
 
-**Ver Stock Bajo:**
-- Dashboard → Productos con Stock Bajo
-- Identificar productos que necesitan reabastecimiento
+**Para una guía completa, consulta [docs/PROVEEDOR.md](docs/PROVEEDOR.md)**
 
-**Registrar Abastecimiento:**
-- Seleccionar producto con stock bajo
-- Ingresar cantidad a reabastecer
-- Clic en "Reabastecer"
-- El stock se actualiza automáticamente
-
-**Ver Historial:**
-- Dashboard → Mi Historial
-- Consultar todos los abastecimientos realizados
+**Funciones principales:**
+- Consultar inventario completo (solo lectura)
+- Monitorear productos con stock bajo
+- Registrar abastecimientos de mercancía
+- Ver historial detallado de entregas
+- Generar reportes para facturación
 
 ## 🔄 Flujo del Proceso
 
@@ -315,20 +359,50 @@ Proyecto académico - Universidad Anáhuac Querétaro © 2025
 ## 📞 Soporte
 
 Para preguntas o problemas:
-- Consultar documentación de la Fase 1 (Modelos ER/ERE)
-- Revisar el código de los modelos para consultas SQL
-- Contactar al equipo de desarrollo
+
+**Documentación:**
+- Consulta la [Guía del Administrador](docs/ADMINISTRADOR.md)
+- Consulta la [Guía del Trabajador](docs/TRABAJADOR.md)
+- Consulta la [Guía del Proveedor](docs/PROVEEDOR.md)
+- Revisa [PUNTOS_EXTRAS_IMPLEMENTADOS.txt](docs/PUNTOS_EXTRAS_IMPLEMENTADOS.txt)
+
+**Código:**
+- Revisa los modelos en `models/` para consultas SQL
+- Consulta `app.py` para rutas y lógica de negocio
+- Revisa `schema_refactor.sql` para estructura de BD
+
+**Contacto:**
+- Repositorio GitHub: [mrnun29/ecommerce-bd-fase2](https://github.com/mrnun29/ecommerce-bd-fase2)
+- Issues: [GitHub Issues](https://github.com/mrnun29/ecommerce-bd-fase2/issues)
+- Equipo de desarrollo (ver sección superior)
+
+## 🔥 Puntos Extra Implementados
+
+El sistema incluye múltiples puntos extra que superan los requisitos base del proyecto. Para detalles completos, consulta [PUNTOS_EXTRAS_IMPLEMENTADOS.txt](docs/PUNTOS_EXTRAS_IMPLEMENTADOS.txt):
+
+1. **Reportes con Información Cruzada (5 pts)**: Panel de analíticas con JOINs múltiples
+2. **Volumen de Datos (10 pts)**: 1010 productos, 1000 pedidos generados automáticamente
+3. **Seguridad para Accesos Simultáneos (10 pts)**: Transacciones InnoDB con commit/rollback
+4. **Integridad y Protección ante Ataques (10 pts)**: Queries parametrizadas, hash de contraseñas
+5. **Escalabilidad y Desempeño (15 pts)**: Índices optimizados, queries eficientes
+6. **Bitácora (Log) de Operaciones (5 pts)**: Logging completo con timestamps
+7. **Dockerización del Sistema (10 pts)**: Docker Compose con 2 servicios
+8. **Arquitectura Desacoplada (10 pts)**: Patrón MVC con capas separadas
+9. **Control de Versiones (5 pts)**: Git/GitHub con commits descriptivos
+10. **Diseño Responsivo (5 pts)**: Bootstrap 5.3 con modo oscuro
+
+**Total de puntos extra: 85 puntos**
 
 ## 🎯 Próximas Mejoras
 
-- [ ] Interfaz web completa con Bootstrap
-- [ ] API REST para integración móvil
-- [ ] Sistema de notificaciones por email
-- [ ] Dashboard con gráficas de análisis
+- [ ] API REST completa para integración móvil
+- [ ] Sistema de notificaciones por email/SMS
+- [ ] Dashboard con gráficas interactivas (Charts.js)
 - [ ] Exportación de reportes a PDF/Excel
-- [ ] Carrito de compras persistente
-- [ ] Sistema de reseñas y valoraciones
-- [ ] Integración con pasarelas de pago reales
+- [ ] Sistema de reseñas y valoraciones de productos
+- [ ] Integración con pasarelas de pago reales (Stripe, PayPal)
+- [ ] Módulo de promoción y descuentos
+- [ ] Sistema de recomendaciones basado en historial
 
 ---
 
