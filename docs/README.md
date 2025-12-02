@@ -1,12 +1,12 @@
-# 📚 Documentación del Sistema de E-Commerce
+# Documentación del Sistema de E-Commerce
 
 Bienvenido a la documentación completa del Sistema de Comercio Electrónico con Gestión de Inventarios.
 
-## 📖 Guías por Rol
+## Guías por Rol
 
 Este sistema implementa un modelo de control de acceso basado en roles (RBAC). Cada rol tiene sus propias responsabilidades, permisos y flujos de trabajo.
 
-### 👨‍💼 [Guía del Administrador](ADMINISTRADOR.md)
+### [Guía del Administrador](ADMINISTRADOR.md)
 
 **Perfil:** Usuario con control total del sistema
 
@@ -27,7 +27,7 @@ Este sistema implementa un modelo de control de acceso basado en roles (RBAC). C
 
 ---
 
-### 👷 [Guía del Trabajador](TRABAJADOR.md)
+### [Guía del Trabajador](TRABAJADOR.md)
 
 **Perfil:** Empleado encargado del punto de venta y operaciones diarias
 
@@ -47,7 +47,7 @@ Este sistema implementa un modelo de control de acceso basado en roles (RBAC). C
 
 ---
 
-### 🚚 [Guía del Proveedor](PROVEEDOR.md)
+### [Guía del Proveedor](PROVEEDOR.md)
 
 **Perfil:** Proveedor externo encargado de reabastecer inventario
 
@@ -67,7 +67,7 @@ Este sistema implementa un modelo de control de acceso basado en roles (RBAC). C
 
 ---
 
-## 🎯 ¿Qué documentación leer?
+## ¿Qué documentación leer?
 
 ### Si eres nuevo en el sistema:
 1. Lee primero la [introducción del README principal](../README.md)
@@ -85,7 +85,7 @@ Este sistema implementa un modelo de control de acceso basado en roles (RBAC). C
 2. Consulta las "Precauciones y Buenas Prácticas"
 3. Si persiste, contacta al soporte (ver sección al final de cada guía)
 
-## 📊 Estructura de las Guías
+## Estructura de las Guías
 
 Cada guía sigue una estructura consistente:
 
@@ -107,7 +107,7 @@ Cada guía sigue una estructura consistente:
 12. Contacto y Soporte
 ```
 
-## 🔗 Enlaces Rápidos
+## Enlaces Rápidos
 
 ### Documentación General
 - [README Principal](../README.md) - Información general del proyecto
@@ -124,7 +124,7 @@ Cada guía sigue una estructura consistente:
 - [Modelos Python](../models/) - Lógica de negocio
 - [Templates HTML](../templates/) - Interfaz de usuario
 
-## 🌐 Acceso al Sistema
+## Acceso al Sistema
 
 **URL Local:** `http://localhost:5001`
 
@@ -138,7 +138,7 @@ Cada guía sigue una estructura consistente:
 
 ⚠️ **Importante:** Cambia las contraseñas por defecto en producción.
 
-## 🎓 Formación y Capacitación
+## Formación y Capacitación
 
 ### Nivel Básico (1-2 horas)
 **Para:** Nuevos usuarios de cualquier rol
@@ -161,7 +161,7 @@ Cada guía sigue una estructura consistente:
 3. Implementar mejores prácticas
 4. Capacitar a otros usuarios
 
-## 📞 Soporte
+## Soporte
 
 **Documentación:**
 - Consulta la guía específica de tu rol
@@ -177,7 +177,7 @@ Cada guía sigue una estructura consistente:
 - Equipo de desarrollo (ver README principal)
 - Administrador del sistema: admin@ecommerce.com
 
-## 📝 Contribuciones a la Documentación
+## Contribuciones a la Documentación
 
 Si encuentras errores, mejoras o deseas agregar contenido:
 
@@ -193,31 +193,31 @@ Si encuentras errores, mejoras o deseas agregar contenido:
 - Sé claro y conciso
 - Usa listas para mejor legibilidad
 
-## 🏆 Mejores Prácticas Generales
+## Mejores Prácticas Generales
 
 Independientemente de tu rol:
 
-✅ **Seguridad:**
+**Seguridad:**
 - Nunca compartas tus credenciales
 - Cierra sesión al terminar
 - Cambia contraseñas periódicamente
 
-✅ **Operación:**
+**Operación:**
 - Registra operaciones inmediatamente
 - Verifica datos antes de confirmar
 - Reporta problemas de inmediato
 
-✅ **Comunicación:**
+**Comunicación:**
 - Mantén contacto con tu supervisor
 - Documenta incidencias importantes
 - Propón mejoras al sistema
 
-✅ **Aprendizaje:**
+**Aprendizaje:**
 - Lee tu guía completa al menos una vez
 - Practica en entorno de prueba
 - Mantente actualizado con cambios
 
-## 📅 Actualización de Documentación
+## Actualización de Documentación
 
 **Versión actual:** 1.0  
 **Última actualización:** Diciembre 2024  
@@ -233,7 +233,7 @@ Independientemente de tu rol:
 
 ---
 
-## 🚀 Comienza Ahora
+## Comienza Ahora
 
 1. **Identifica tu rol** en el sistema
 2. **Abre tu guía:**
@@ -245,7 +245,7 @@ Independientemente de tu rol:
 5. **Explora tu dashboard** y funcionalidades
 6. **Practica con casos de uso** de la guía
 
-¡Éxito en el uso del sistema! 🎉
+¡Éxito en el uso del sistema! 
 
 ---
 

@@ -1,32 +1,32 @@
-# 🚚 Guía del Proveedor
+# Guía del Proveedor
 
 ## Descripción del Rol
 
 El **Proveedor** es el rol encargado de monitorear el inventario y registrar abastecimientos de productos. Este rol tiene permisos limitados y especializados, enfocados en la gestión de suministro de mercancía.
 
-## 🔑 Credenciales de Acceso
+## Credenciales de Acceso
 
 - **Correo:** `proveedor@ecommerce.com`
 - **Contraseña:** `123456`
 
-⚠️ **Importante:** Cambia tu contraseña después del primer inicio de sesión.
+**Importante:** Cambia tu contraseña después del primer inicio de sesión.
 
-## 📋 Permisos y Capacidades
+## Permisos y Capacidades
 
 El proveedor tiene acceso a las siguientes funcionalidades:
 
-- ✅ Consultar inventario completo (solo lectura)
-- ✅ Ver productos con stock bajo
-- ✅ Registrar abastecimientos de productos
-- ✅ Ver historial de abastecimientos propios
-- ✅ Consultar detalles de productos
-- ❌ **No puede:** Modificar productos
-- ❌ **No puede:** Procesar ventas
-- ❌ **No puede:** Ver pedidos de clientes
-- ❌ **No puede:** Gestionar usuarios
-- ❌ **No puede:** Modificar precios
+- Consultar inventario completo (solo lectura)
+- Ver productos con stock bajo
+- Registrar abastecimientos de productos
+- Ver historial de abastecimientos propios
+- Consultar detalles de productos
+- **No puede:** Modificar productos
+- **No puede:** Procesar ventas
+- **No puede:** Ver pedidos de clientes
+- **No puede:** Gestionar usuarios
+- **No puede:** Modificar precios
 
-## 🏢 Vinculación con Empresa Proveedora
+## Vinculación con Empresa Proveedora
 
 **Importante:** Para poder registrar abastecimientos, tu cuenta de usuario debe estar **vinculada a una empresa proveedora**.
 
@@ -43,7 +43,7 @@ Si puedes acceder a "Mi Historial" y ves el nombre de una empresa, estás vincul
 3. El administrador te vinculará a la empresa
 4. Una vez vinculado, podrás registrar abastecimientos
 
-## 🎯 Funcionalidades Principales
+## Funcionalidades Principales
 
 ### 1. Dashboard del Proveedor
 
@@ -70,8 +70,8 @@ Al iniciar sesión, verás tu panel personalizado con:
   - Indicador visual de estado
 
 #### 2.2 Indicadores Visuales
-- 🟢 **Verde:** Stock normal (por encima del nivel mínimo)
-- 🔴 **Rojo:** Stock bajo (por debajo del nivel mínimo) - ¡Requiere atención!
+- **Verde:** Stock normal (por encima del nivel mínimo)
+- **Rojo:** Stock bajo (por debajo del nivel mínimo) - ¡Requiere atención!
 
 **¿Por qué es útil?**
 - Monitoreas en tiempo real los niveles de stock
@@ -161,10 +161,10 @@ Fecha: 2024-12-02 10:30:00
 #### 4.2 Validaciones del Sistema
 
 El sistema verifica automáticamente:
-- ✅ Que estés autenticado como proveedor
-- ✅ Que estés vinculado a una empresa proveedora
-- ✅ Que el producto exista en el sistema
-- ✅ Que la cantidad sea válida (mayor a 0)
+- Que estés autenticado como proveedor
+- Que estés vinculado a una empresa proveedora
+- Que el producto exista en el sistema
+- Que la cantidad sea válida (mayor a 0)
 
 Si algo falla, recibirás un mensaje de error explicativo.
 
@@ -211,7 +211,7 @@ Historial reciente:
 - **Auditoría:** Validación de cumplimiento de contratos
 - **Planificación:** Análisis de patrones de reabastecimiento
 
-## 🛠️ Casos de Uso Comunes
+## Casos de Uso Comunes
 
 ### Caso 1: Revisión Diaria de Stock Bajo
 
@@ -332,64 +332,64 @@ Total del mes: $757,275.00
 
 **Tiempo de respuesta esperado:** 1-4 horas para productos críticos
 
-## ⚠️ Precauciones y Buenas Prácticas
+## Precauciones y Buenas Prácticas
 
 ### Registro de Abastecimientos
 
-✅ **Registra inmediatamente después de la entrega**
+**Registra inmediatamente después de la entrega**
 - No esperes al final del día
 - Mientras la mercancía está fresca en tu memoria
 - Evita errores de cantidades
 
-✅ **Verifica las cantidades exactas**
+**Verifica las cantidades exactas**
 - Cuenta físicamente la mercancía
 - No registres "estimados"
 - Si hay diferencias, anota y reporta
 
-✅ **Documenta cada entrega**
+**Documenta cada entrega**
 - Captura de pantalla de confirmación
 - Anotación en tu bitácora personal
 - Comprobante de entrega firmado (si aplica)
 
-✅ **Revisa el historial después de registrar**
+**Revisa el historial después de registrar**
 - Confirma que el registro aparece
 - Verifica que la cantidad sea correcta
 - Asegúrate que la fecha y hora sean las esperadas
 
 ### Monitoreo de Inventario
 
-✅ **Revisa stock bajo diariamente**
+**Revisa stock bajo diariamente**
 - Establecer rutina (ejemplo: 8:00 AM)
 - No esperar a que te llamen
 - Ser proactivo en las entregas
 
-✅ **Comunica retrasos anticipadamente**
+**Comunica retrasos anticipadamente**
 - Si no puedes cumplir una entrega, avisar con tiempo
 - Proponer alternativas
 - Mantener confianza con el cliente
 
-✅ **Planifica con anticipación**
+**Planifica con anticipación**
 - No esperar a que el stock llegue a 0
 - Tener buffer de seguridad en tu inventario
 - Coordinar con tu proveedor mayorista
 
 ### Seguridad
 
-✅ **Protege tus credenciales**
+**Protege tus credenciales**
 - No compartas tu usuario y contraseña
 - Cambia la contraseña periódicamente
 - Cierra sesión al terminar
 
-✅ **Solo registra entregas reales**
+**Solo registra entregas reales**
 - Nunca registres abastecimientos que no hayas entregado
 - Mantén la integridad del sistema
 - Tu historial es tu reputación
 
-✅ **Verifica tu vinculación a la empresa**
+**Verifica tu vinculación a la empresa**
 - Si cambias de empresa, notifica al administrador
 - Asegúrate que tu usuario esté vinculado correctamente
 
-## 🔧 Solución de Problemas Comunes
+## Solución de Problemas Comunes
 
 ### Problema: No puedo registrar abastecimientos
 
@@ -442,7 +442,7 @@ Total del mes: $757,275.00
 ### Problema: Registré una cantidad incorrecta
 
 **Solución:**
-1. ⚠️ **No puedes editar ni eliminar abastecimientos** (por seguridad y trazabilidad)
+1. **No puedes editar ni eliminar abastecimientos** (por seguridad y trazabilidad)
 2. Contacta **inmediatamente** al administrador
 3. Proporciona:
    - Fecha y hora del registro incorrecto
@@ -469,7 +469,7 @@ Total del mes: $757,275.00
 5. Cerrar sesión y volver a entrar
 6. Verificar nuevamente en "Mi Historial"
 
-## 📊 Estadísticas y Reportes
+## Estadísticas y Reportes
 
 ### Métricas Personales
 
@@ -505,7 +505,7 @@ Para generar reportes:
 4. Generar gráficas si es necesario
 5. Usar para facturación o análisis interno
 
-## 📱 Atajos y Navegación Rápida
+## Atajos y Navegación Rápida
 
 | Función | Ruta | Atajo Dashboard |
 |---------|------|-----------------|
@@ -516,30 +516,30 @@ Para generar reportes:
 | Registrar Abastecimiento | `/proveedores/reabastecer` | (desde Stock Bajo) |
 | Mi Historial | `/proveedor/historial` | Mi Historial |
 
-## 🎓 Tips para Proveedores
+## Tips para Proveedores
 
 ### Rutina Diaria Recomendada
 
 **8:00 AM - Revisión Matutina:**
-1. ✅ Iniciar sesión
-2. ✅ Consultar "Stock Bajo"
-3. ✅ Identificar productos críticos (0-3 unidades)
-4. ✅ Planificar entregas del día
-5. ✅ Verificar inventario propio disponible
+1. Iniciar sesión
+2. Consultar "Stock Bajo"
+3. Identificar productos críticos (0-3 unidades)
+4. Planificar entregas del día
+5. Verificar inventario propio disponible
 
 **Durante el Día - Entregas:**
-1. ✅ Coordinar entregas según prioridades
-2. ✅ Registrar cada abastecimiento inmediatamente
-3. ✅ Verificar confirmación en el historial
-4. ✅ Documentar con fotos/comprobantes
+1. Coordinar entregas según prioridades
+2. Registrar cada abastecimiento inmediatamente
+3. Verificar confirmación en el historial
+4. Documentar con fotos/comprobantes
 
 **5:00 PM - Cierre del Día:**
-1. ✅ Revisar "Mi Historial" del día
-2. ✅ Verificar que todos los registros estén correctos
-3. ✅ Anotar totales de unidades entregadas
-4. ✅ Actualizar tu inventario interno
-5. ✅ Planificar entregas del día siguiente
-6. ✅ Cerrar sesión
+1. Revisar "Mi Historial" del día
+2. Verificar que todos los registros estén correctos
+3. Anotar totales de unidades entregadas
+4. Actualizar tu inventario interno
+5. Planificar entregas del día siguiente
+6. Cerrar sesión
 
 ### Gestión Semanal
 
@@ -570,22 +570,22 @@ Para generar reportes:
 
 ### Comunicación Efectiva
 
-✅ **Con el administrador:**
+**Con el administrador:**
 - Reporta problemas inmediatamente
 - Propón mejoras en el proceso
 - Mantén comunicación fluida
 
-✅ **Con tu proveedor mayorista:**
+**Con tu proveedor mayorista:**
 - Anticipa pedidos según tendencias
 - Negocia tiempos de entrega
 - Mantén stock de seguridad
 
-✅ **Documentación:**
+**Documentación:**
 - Lleva bitácora paralela (Excel o papel)
 - Guarda comprobantes de entrega
 - Mantén fotos de mercancía entregada
 
-## 📞 Contacto y Soporte
+## Contacto y Soporte
 
 **Para problemas técnicos del sistema:**
 - Administrador: admin@ecommerce.com
@@ -599,7 +599,7 @@ Para generar reportes:
 - Departamento de cuentas por pagar
 - Administración
 
-## 📝 Checklist del Proveedor
+## Checklist del Proveedor
 
 ### Diario
 - [ ] Revisar stock bajo (8:00 AM)
@@ -632,15 +632,15 @@ Para generar reportes:
 **Última actualización:** Diciembre 2024  
 **Sistema:** E-commerce con Gestión de Inventarios - Universidad Anáhuac Querétaro
 
-## 🎯 Recuerda
+## Recuerda
 
 > "Como proveedor, eres un eslabón fundamental en la cadena de suministro. Tu puntualidad, precisión en los registros y comunicación proactiva garantizan que el negocio nunca se quede sin inventario. ¡Tu trabajo es esencial para el éxito del comercio!"
 
-## 🌟 Ventajas del Sistema para Proveedores
+## Ventajas del Sistema para Proveedores
 
-- ✅ **Transparencia total:** Ves en tiempo real qué se necesita
-- ✅ **Trazabilidad completa:** Historial detallado de todas tus entregas
-- ✅ **Facturación simplificada:** Datos precisos para generar facturas
-- ✅ **Comunicación eficiente:** Sistema centralizado, menos llamadas
-- ✅ **Planificación mejorada:** Anticipas necesidades antes de que sean urgentes
-- ✅ **Confianza del cliente:** Entregas documentadas y verificables
+- **Transparencia total:** Ves en tiempo real qué se necesita
+- **Trazabilidad completa:** Historial detallado de todas tus entregas
+- **Facturación simplificada:** Datos precisos para generar facturas
+- **Comunicación eficiente:** Sistema centralizado, menos llamadas
+- **Planificación mejorada:** Anticipas necesidades antes de que sean urgentes
+- **Confianza del cliente:** Entregas documentadas y verificables

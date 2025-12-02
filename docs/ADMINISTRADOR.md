@@ -1,28 +1,28 @@
-# 👨‍💼 Guía del Administrador
+# Guía del Administrador
 
 ## Descripción del Rol
 
 El **Administrador** tiene control total sobre el sistema de comercio electrónico. Este rol está diseñado para gestionar toda la operación del negocio, desde el inventario hasta los usuarios y proveedores.
 
-## 🔑 Credenciales de Acceso
+## Credenciales de Acceso
 
 - **Correo:** `admin@ecommerce.com`
 - **Contraseña:** `admin123`
 
-## 📋 Permisos y Capacidades
+## Permisos y Capacidades
 
 El administrador tiene acceso completo a todas las funcionalidades del sistema:
 
-- ✅ Gestión completa de usuarios (crear, editar, inhabilitar, eliminar)
-- ✅ CRUD completo de productos
-- ✅ Gestión de proveedores (empresas)
-- ✅ Vincular/desvincular usuarios a empresas proveedoras
-- ✅ Visualizar todos los pedidos del sistema
-- ✅ Acceso a analíticas y reportes
-- ✅ Gestión de inventario con alertas de stock bajo
-- ✅ Eliminar cualquier registro del sistema
+- Gestión completa de usuarios (crear, editar, inhabilitar, eliminar)
+- CRUD completo de productos
+- Gestión de proveedores (empresas)
+- Vincular/desvincular usuarios a empresas proveedoras
+- Visualizar todos los pedidos del sistema
+- Acceso a analíticas y reportes
+- Gestión de inventario con alertas de stock bajo
+- Eliminar cualquier registro del sistema
 
-## 🎯 Funcionalidades Principales
+## Funcionalidades Principales
 
 ### 1. Dashboard Principal
 
@@ -71,7 +71,7 @@ Imagen: https://ejemplo.com/imagen-laptop.jpg
 
 #### 2.4 Eliminar Producto
 - **Ruta:** `/productos/<id>/eliminar` (POST)
-- ⚠️ **Precaución:** Esta acción eliminará el producto permanentemente
+- **Precaución:** Esta acción eliminará el producto permanentemente
 - Solo posible si el producto no está en pedidos activos
 
 ### 3. Gestión de Usuarios
@@ -107,7 +107,7 @@ Código Postal: 76000
 - **Ruta:** `/usuarios/<id>/editar` (POST)
 - Modificar información personal y dirección
 - Cambiar rol si es necesario
-- ⚠️ No puedes editar tu propia cuenta de administrador
+- No puedes editar tu propia cuenta de administrador
 
 #### 3.4 Inhabilitar Usuario
 - **Ruta:** `/usuarios/<id>/inhabilitar` (POST)
@@ -123,7 +123,7 @@ Código Postal: 76000
 
 #### 3.6 Eliminar Usuario
 - **Ruta:** `/usuarios/<id>/eliminar` (POST)
-- ⚠️ **Precaución:** Elimina permanentemente el usuario
+- **Precaución:** Elimina permanentemente el usuario
 - Elimina también su dirección y teléfonos asociados
 - No puedes eliminar tu propia cuenta de administrador
 
@@ -175,7 +175,7 @@ Código Postal: 76140
 
 #### 4.5 Eliminar Proveedor
 - **Ruta:** `/proveedores/<id>/eliminar` (POST)
-- ⚠️ Elimina la empresa proveedora permanentemente
+- Elimina la empresa proveedora permanentemente
 - Elimina también el historial de abastecimientos
 - Los usuarios vinculados quedan disponibles para reasignar
 
@@ -185,8 +185,8 @@ Código Postal: 76140
 - **Ruta:** `/inventario`
 - Tabla con todos los productos y sus niveles de stock
 - Indicadores visuales:
-  - 🟢 Verde: Stock normal (por encima del nivel mínimo)
-  - 🔴 Rojo: Stock bajo (por debajo del nivel mínimo)
+  - Verde: Stock normal (por encima del nivel mínimo)
+  - Rojo: Stock bajo (por debajo del nivel mínimo)
 - Búsqueda y filtrado de productos
 
 #### 5.2 Editar Inventario
@@ -302,7 +302,7 @@ El sistema expone endpoints API para consultas avanzadas:
 - Clientes con más pedidos realizados
 - Total gastado por cliente
 
-## 🛠️ Casos de Uso Comunes
+## Casos de Uso Comunes
 
 ### Caso 1: Agregar Nuevo Producto al Catálogo
 
@@ -368,34 +368,34 @@ El sistema expone endpoints API para consultas avanzadas:
 4. El usuario no podrá iniciar sesión
 5. Para reactivar: clic en "Habilitar"
 
-## ⚠️ Precauciones y Buenas Prácticas
+## Precauciones y Buenas Prácticas
 
 ### Seguridad
-- ✅ **Nunca compartas las credenciales de administrador**
-- ✅ Cambia la contraseña por defecto inmediatamente
-- ✅ Revisa periódicamente los usuarios activos
-- ✅ Inhabilita usuarios inactivos en lugar de eliminarlos
-- ✅ Mantén un registro de cambios importantes
+- **Nunca compartas las credenciales de administrador**
+- Cambia la contraseña por defecto inmediatamente
+- Revisa periódicamente los usuarios activos
+- Inhabilita usuarios inactivos en lugar de eliminarlos
+- Mantén un registro de cambios importantes
 
 ### Gestión de Inventario
-- ✅ Establece niveles mínimos realistas según la demanda
-- ✅ Revisa semanalmente los productos con stock bajo
-- ✅ Mantén contacto con proveedores para abastecimientos rápidos
-- ✅ Actualiza precios según el mercado
+- Establece niveles mínimos realistas según la demanda
+- Revisa semanalmente los productos con stock bajo
+- Mantén contacto con proveedores para abastecimientos rápidos
+- Actualiza precios según el mercado
 
 ### Gestión de Usuarios
-- ✅ Asigna roles correctamente según las responsabilidades
-- ✅ Verifica que los trabajadores solo procesen ventas autorizadas
-- ✅ Vincula proveedores a empresas reales para trazabilidad
-- ✅ No elimines usuarios con historial de transacciones (inhabilítalos)
+- Asigna roles correctamente según las responsabilidades
+- Verifica que los trabajadores solo procesen ventas autorizadas
+- Vincula proveedores a empresas reales para trazabilidad
+- No elimines usuarios con historial de transacciones (inhabilítalos)
 
 ### Gestión de Pedidos
-- ✅ Actualiza estados de pedidos oportunamente
-- ✅ Verifica que el stock se descuente correctamente
-- ✅ Revisa pedidos cancelados para identificar problemas
-- ✅ Mantén comunicación con clientes sobre entregas
+- Actualiza estados de pedidos oportunamente
+- Verifica que el stock se descuente correctamente
+- Revisa pedidos cancelados para identificar problemas
+- Mantén comunicación con clientes sobre entregas
 
-## 🔧 Solución de Problemas Comunes
+## Solución de Problemas Comunes
 
 ### Problema: No puedo eliminar un producto
 **Solución:** Verifica que el producto no esté en pedidos activos. Si es necesario, edita el producto y reduce su stock a 0, o inhabilítalo en lugar de eliminarlo.
@@ -412,7 +412,7 @@ El sistema expone endpoints API para consultas avanzadas:
 ### Problema: Stock no se actualiza después de un pedido
 **Solución:** Verifica que el pedido no esté en estado "Cancelado". Solo los pedidos procesados descuentan del inventario.
 
-## 📊 Reportes y Consultas SQL Implementadas
+## Reportes y Consultas SQL Implementadas
 
 El sistema ejecuta las siguientes consultas en segundo plano:
 
@@ -423,7 +423,7 @@ El sistema ejecuta las siguientes consultas en segundo plano:
 5. **Ranking de ingresos:** JOIN con agregación por producto
 6. **Top clientes:** Agrupación por `id_usuario` con COUNT de pedidos
 
-## 📱 Navegación Rápida
+## Navegación Rápida
 
 | Función | Ruta | Atajo Dashboard |
 |---------|------|-----------------|
@@ -440,7 +440,7 @@ El sistema ejecuta las siguientes consultas en segundo plano:
 | Pedidos | `/pedidos` | Ver Pedidos |
 | Analíticas | `/admin/analiticas` | Analíticas |
 
-## 🎓 Recomendaciones de Uso
+## Recomendaciones de Uso
 
 1. **Inicio del día:**
    - Revisa el panel de analíticas
@@ -463,7 +463,7 @@ El sistema ejecuta las siguientes consultas en segundo plano:
    - Revisa logs del sistema
    - Actualiza información de proveedores
 
-## 📞 Soporte
+## Soporte
 
 Para problemas técnicos o consultas sobre el sistema, contacta al equipo de desarrollo o consulta la documentación técnica en el repositorio del proyecto.
 

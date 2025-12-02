@@ -1,31 +1,31 @@
-# 👷 Guía del Trabajador
+# Guía del Trabajador
 
 ## Descripción del Rol
 
 El **Trabajador** (o Empleado) es el rol encargado de procesar ventas directas en el punto de venta, gestionar el inventario y atender las operaciones diarias del comercio. Este rol tiene permisos intermedios enfocados en las operaciones de venta.
 
-## 🔑 Credenciales de Acceso
+## Credenciales de Acceso
 
 - **Correo:** `trabajador@ecommerce.com`
 - **Contraseña:** `123456`
 
-⚠️ **Importante:** Cambia tu contraseña después del primer inicio de sesión.
+**Importante:** Cambia tu contraseña después del primer inicio de sesión.
 
-## 📋 Permisos y Capacidades
+## Permisos y Capacidades
 
 El trabajador tiene acceso a las siguientes funcionalidades:
 
-- ✅ Procesar ventas directas (punto de venta)
-- ✅ Consultar catálogo de productos
-- ✅ Ver y gestionar inventario
-- ✅ Crear y editar productos
-- ✅ Ver sus propios pedidos procesados
-- ✅ Actualizar estado de pedidos
-- ❌ **No puede:** Crear/eliminar usuarios
-- ❌ **No puede:** Gestionar proveedores
-- ❌ **No puede:** Ver analíticas completas del sistema
+- Procesar ventas directas (punto de venta)
+- Consultar catálogo de productos
+- Ver y gestionar inventario
+- Crear y editar productos
+- Ver sus propios pedidos procesados
+- Actualizar estado de pedidos
+- **No puede:** Crear/eliminar usuarios
+- **No puede:** Gestionar proveedores
+- **No puede:** Ver analíticas completas del sistema
 
-## 🎯 Funcionalidades Principales
+## Funcionalidades Principales
 
 ### 1. Dashboard del Trabajador
 
@@ -108,8 +108,8 @@ Como trabajador, puedes gestionar el catálogo de productos.
 - Lista completa de productos disponibles
 - Información: nombre, precio, stock, descripción
 - Indicadores visuales:
-  - 🟢 Verde: Stock normal
-  - 🔴 Rojo: Stock bajo (requiere atención)
+  - Verde: Stock normal
+  - Rojo: Stock bajo (requiere atención)
 
 #### 3.2 Crear Nuevo Producto
 - **Ruta:** `/productos/crear`
@@ -172,7 +172,7 @@ Si necesitas ajustar el stock (por ejemplo, después de un inventario físico):
 2. Modifica el campo "Stock"
 3. Guarda los cambios
 
-⚠️ **Precaución:** Solo ajusta el stock si tienes certeza de las cantidades físicas.
+**Precaución:** Solo ajusta el stock si tienes certeza de las cantidades físicas.
 
 ### 5. Gestión de Pedidos
 
@@ -219,7 +219,7 @@ Pendiente → Procesando → Enviado → Entregado
 Pendiente → Procesando → Entregado
 ```
 
-## 🛠️ Casos de Uso Comunes
+## Casos de Uso Comunes
 
 ### Caso 1: Venta Rápida en Mostrador
 
@@ -322,58 +322,58 @@ Diferencia: -3 unidades (posible merma o error previo)
 4. Verificar que el producto aparece en el catálogo
 5. Ya está disponible para vender
 
-## ⚠️ Precauciones y Buenas Prácticas
+## Precauciones y Buenas Prácticas
 
 ### Durante las Ventas
 
-✅ **Verificar stock antes de confirmar**
+**Verificar stock antes de confirmar**
 - Siempre revisa que haya stock disponible antes de prometer al cliente
 - El sistema validará automáticamente, pero es mejor prevenir
 
-✅ **Confirmar método de pago**
+**Confirmar método de pago**
 - Pregunta al cliente cómo pagará antes de procesar
 - Para Efectivo: verifica que tengas cambio
 - Para Tarjeta: asegúrate de tener terminal disponible
 - Para Transferencia: proporciona datos bancarios correctos
 
-✅ **Revisar el total antes de procesar**
+**Revisar el total antes de procesar**
 - Verifica que las cantidades sean correctas
 - Confirma que el precio mostrado sea el actual
 - Si hay dudas, consulta con el administrador
 
-✅ **Entregar comprobante**
+**Entregar comprobante**
 - Siempre proporciona el número de pedido al cliente
 - Si es posible, imprime o envía comprobante digital
 
 ### Gestión de Inventario
 
-✅ **Reportar stock bajo inmediatamente**
+**Reportar stock bajo inmediatamente**
 - No esperes a que se agote completamente
 - Notifica cuando llegue al nivel mínimo
 
-✅ **Actualizar stock solo con certeza**
+**Actualizar stock solo con certeza**
 - No hagas ajustes "por estimación"
 - Solo actualiza después de conteo físico
 
-✅ **Documentar discrepancias**
+**Documentar discrepancias**
 - Si encuentras diferencias, anótalas
 - Reporta al administrador para investigación
 
 ### Seguridad
 
-✅ **Mantén tus credenciales seguras**
+**Mantén tus credenciales seguras**
 - No compartas tu usuario y contraseña
 - Cierra sesión al terminar tu turno
 
-✅ **Verifica identidad en pagos con tarjeta**
+**Verifica identidad en pagos con tarjeta**
 - Solicita identificación si es necesario
 - Valida firma en el voucher
 
-✅ **No proceses ventas sin autorización**
+**No proceses ventas sin autorización**
 - Solo ventas reales y autorizadas
 - No hagas ventas "de favor" sin pago
 
-## 🔧 Solución de Problemas Comunes
+## Solución de Problemas Comunes
 
 ### Problema: No puedo procesar una venta
 
@@ -421,7 +421,7 @@ Diferencia: -3 unidades (posible merma o error previo)
 4. El administrador puede cambiar el estado a "Cancelado"
 5. Procesa una nueva venta con los datos correctos
 
-## 📊 Estadísticas y Reportes
+## Estadísticas y Reportes
 
 Aunque no tienes acceso al panel completo de analíticas (solo para administradores), puedes:
 
@@ -439,7 +439,7 @@ Aunque no tienes acceso al panel completo de analíticas (solo para administrado
    - Productos más vendidos
 4. Reportar al administrador o supervisor
 
-## 📱 Atajos y Navegación Rápida
+## Atajos y Navegación Rápida
 
 | Función | Ruta | Atajo Dashboard |
 |---------|------|-----------------|
@@ -451,37 +451,37 @@ Aunque no tienes acceso al panel completo de analíticas (solo para administrado
 | Mis Pedidos | `/pedidos` | Ver Mis Pedidos |
 | Inventario | `/productos` | Consultar Inventario |
 
-## 🎓 Tips para Trabajadores
+## Tips para Trabajadores
 
 ### Inicio de Turno
-1. ✅ Inicia sesión con tus credenciales
-2. ✅ Verifica que el sistema esté funcionando correctamente
-3. ✅ Consulta productos con stock bajo
-4. ✅ Prepara terminal de pago y caja
-5. ✅ Revisa si hay pedidos pendientes de entregas
+1. Inicia sesión con tus credenciales
+2. Verifica que el sistema esté funcionando correctamente
+3. Consulta productos con stock bajo
+4. Prepara terminal de pago y caja
+5. Revisa si hay pedidos pendientes de entregas
 
 ### Durante el Turno
-1. ✅ Procesa ventas con precisión y rapidez
-2. ✅ Mantén organizada la caja
-3. ✅ Actualiza estados de pedidos conforme avances
-4. ✅ Reporta anomalías inmediatamente
-5. ✅ Atiende alertas de stock bajo
+1. Procesa ventas con precisión y rapidez
+2. Mantén organizada la caja
+3. Actualiza estados de pedidos conforme avances
+4. Reporta anomalías inmediatamente
+5. Atiende alertas de stock bajo
 
 ### Fin de Turno
-1. ✅ Verifica que todos los pedidos del día tengan estado correcto
-2. ✅ Haz corte de caja (procedimiento interno)
-3. ✅ Reporta ventas totales al supervisor
-4. ✅ Nota productos que necesitan reabastecimiento
-5. ✅ Cierra sesión correctamente
+1. Verifica que todos los pedidos del día tengan estado correcto
+2. Haz corte de caja (procedimiento interno)
+3. Reporta ventas totales al supervisor
+4. Nota productos que necesitan reabastecimiento
+5. Cierra sesión correctamente
 
 ### Atención al Cliente
-1. ✅ Saluda amablemente
-2. ✅ Confirma disponibilidad antes de prometer
-3. ✅ Explica métodos de pago disponibles
-4. ✅ Proporciona comprobante siempre
-5. ✅ Agradece por la compra
+1. Saluda amablemente
+2. Confirma disponibilidad antes de prometer
+3. Explica métodos de pago disponibles
+4. Proporciona comprobante siempre
+5. Agradece por la compra
 
-## 📞 Soporte y Contacto
+## Soporte y Contacto
 
 **Para problemas técnicos:**
 - Contacta al administrador del sistema
@@ -498,7 +498,7 @@ Aunque no tienes acceso al panel completo de analíticas (solo para administrado
 - Sistema de tickets (si aplica)
 - Llamada directa al administrador
 
-## 📝 Checklist del Trabajador
+## Checklist del Trabajador
 
 ### Diario
 - [ ] Iniciar sesión al comenzar turno
@@ -527,6 +527,6 @@ Aunque no tienes acceso al panel completo de analíticas (solo para administrado
 **Última actualización:** Diciembre 2024  
 **Sistema:** E-commerce con Gestión de Inventarios - Universidad Anáhuac Querétaro
 
-## 🎯 Recuerda
+## Recuerda
 
 > "Tu rol como trabajador es fundamental para el éxito del negocio. Cada venta procesada correctamente, cada alerta de stock reportada a tiempo, y cada cliente atendido con excelencia contribuyen al crecimiento de la empresa. ¡Éxito en tu turno!"
