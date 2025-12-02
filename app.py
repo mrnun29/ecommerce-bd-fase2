@@ -719,6 +719,23 @@ def pedidos_estados():
     estados = {r['estado']: r['total'] for r in resultados}
     return estados
 
+@app.route('/api/clientes/top10')
+@login_required(roles=['Administrador'])
+def clientes_top10():
+    """Obtener top 10 clientes con más pedidos"""
+    query = """
+        SELECT u.id_usuario, u.nombre, COUNT(p.id_pedido) as total_pedidos,
+               SUM(p.total) as total_gastado
+        FROM USUARIO u
+        JOIN PEDIDO p ON u.id_usuario = p.id_usuario
+        WHERE u.rol = 'Cliente'
+        GROUP BY u.id_usuario
+        ORDER BY total_pedidos DESC
+        LIMIT 10
+    """
+    resultados = db.fetch_query(query)
+    return resultados
+
 # ============= MANEJO DE ERRORES =============
 
 @app.errorhandler(404)
